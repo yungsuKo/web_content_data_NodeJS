@@ -1,0 +1,19 @@
+{
+  "name": "been_present_web",
+  "version": "1.0.0",
+  "description": "first project for content creative",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "crawling",
+    "data"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
