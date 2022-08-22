@@ -10,5 +10,6 @@ const handleListening = () =>
 app.listen(port, handleListening);
 app.set("view engine", "ejs");
 app.set("views", process.cwd() + "/src/views");
+app.use(express.static(__dirname + "public"));
 
 app.use("/", rootRouter);
