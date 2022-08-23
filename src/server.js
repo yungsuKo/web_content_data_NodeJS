@@ -17,3 +17,4 @@ app.set("views", process.cwd() + "/src/views");
 app.use(express.static(__dirname + "/public"));
 
 app.use("/", rootRouter);
+app.use("/assets", express.static("assets"));

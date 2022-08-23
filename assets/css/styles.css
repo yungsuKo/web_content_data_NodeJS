@@ -1,0 +1,17 @@
+/*!**********************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/client/scss/styles.scss ***!
+  \**********************************************************************************************************************/
+#navigation_bar {
+  display: flex;
+  justify-content: space-between; }
+
+.menu_list {
+  width: 60%;
+  display: flex;
+  justify-content: space-between;
+  color: white; }
+
+body {
+  padding: 30px;
+  background-color: black; }
+
