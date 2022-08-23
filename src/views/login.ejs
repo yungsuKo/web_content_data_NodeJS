@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <%- include("../public/assets/styles.css") %> <%-include('./part/header');%>
+    <%-include('./part/header');%>
   </head>
   <body>
-    <div>
-      <input type="text" />
+    <nav id="navigation_bar">
+      <ul class="menu_list">
+        <a class="menu_list summary"><li>Summary</li></a>
+        <a class="menu_list naver"><li>Naver</li></a>
+        <a class="menu_list kakao"><li>Kakao</li></a>
+      </ul>
+    </nav>
+    <div id="container">
+      <form>
+        <input type="text" placeholder="ID" />
+        <input type="password" placeholder="password" />
+      </form>
     </div>
   </body>
 </html>
