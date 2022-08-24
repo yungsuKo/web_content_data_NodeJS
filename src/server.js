@@ -1,10 +1,12 @@
 import express from "express";
 import { application } from "express";
 import rootRouter from "./routers/rootRouter";
+import dataRouter from "./routers/dataRouter";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import expressSession from "express-session";
+import "./db";
 
 const app = express();
 const port = 4000;
@@ -41,4 +43,5 @@ console.log(__dirname);
 app.set("views", process.cwd() + "/src/views");
 
 app.use("/", rootRouter);
+app.use("/data", dataRouter);
 app.use("/assets", express.static("assets"));

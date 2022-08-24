@@ -8,7 +8,7 @@ import {
 
 const rootRouter = express.Router();
 
-rootRouter.route("/login").get(getLogin).post(postLogin);
+rootRouter.route("/").get(getLogin).post(postLogin);
 rootRouter.route("/signup").get(getSignup).post(postSignup);
 
 export default rootRouter;
