@@ -170,6 +170,25 @@ form {
     width: 100%;
     justify-content: center; }
 
+.container {
+  margin-top: 50px;
+  border: 1px solid white;
+  width: 80%;
+  height: 200px; }
+  .container .container-post_trend {
+    display: flex;
+    justify-content: space-between; }
+    .container .container-post_trend .container-post_lists {
+      margin: 10px;
+      width: 200px;
+      height: 180px;
+      border: 1px solid white; }
+    .container .container-post_trend .container-post_charts {
+      margin: 10px;
+      width: 90%;
+      height: 180px;
+      border: 1px solid white; }
+
 body {
   padding: 30px;
   background-color: black;

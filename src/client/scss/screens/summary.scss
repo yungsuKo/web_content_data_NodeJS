@@ -1,0 +1,22 @@
+.container {
+  margin-top: 50px;
+  border: 1px solid white;
+  width: 80%;
+  height: 200px;
+  .container-post_trend {
+    display: flex;
+    justify-content: space-between;
+    .container-post_lists {
+      margin: 10px;
+      width: 200px;
+      height: 180px;
+      border: 1px solid white;
+    }
+    .container-post_charts {
+      margin: 10px;
+      width: 90%;
+      height: 180px;
+      border: 1px solid white;
+    }
+  }
+}

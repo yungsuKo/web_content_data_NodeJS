@@ -1,3 +1,5 @@
 export const summaryController = (req, res) => {
-  res.send("this is summary page");
+  res.render("summary", {
+    title: "Summary",
+  });
 };

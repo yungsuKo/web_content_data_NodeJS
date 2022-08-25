@@ -5,3 +5,11 @@ export const protectorMiddleware = (req, res, next) => {
     next();
   }
 };
+
+export const publicMiddleware = (req, res, next) => {
+  if (req.session.loggedIn) {
+    res.redirect("/data/summary");
+  } else {
+    next();
+  }
+};
