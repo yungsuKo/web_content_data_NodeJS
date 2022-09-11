@@ -1,0 +1,94 @@
+.container {
+  margin-top: 50px;
+  border: 1px solid white;
+  width: 80%;
+  height: 400px;
+  .container-post_trend {
+    display: flex;
+    justify-content: space-between;
+    .container-post_lists {
+      margin: 10px;
+      width: 200px;
+      height: 380px;
+      border: 1px solid white;
+      overflow: scroll;
+      .eachpost {
+        margin: 5px;
+        height: 50px;
+        border: 1px solid lightblue;
+        display: flex;
+        img {
+          object-fit: cover;
+          width: 50px;
+        }
+        .eachpost_desc {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 5px 0 5px 2px;
+          .eachpost_desc-title {
+            color: white;
+            font-size: 11px;
+          }
+          .eachpost_desc-date {
+            color: white;
+            font-size: 9px;
+          }
+        }
+      }
+    }
+    .container-post_charts {
+      margin: 10px;
+      width: 90%;
+      height: 380px;
+      border: 1px solid white;
+    }
+  }
+  .container-post_datas {
+    border: solid 1px white;
+    height: 500px;
+    overflow: scroll;
+
+    table {
+      color: white;
+      border: 1px solid white;
+      tr {
+        border: 1px solid white;
+      }
+      th {
+        border: 1px solid white;
+      }
+      td {
+        border: 1px solid white;
+      }
+      .post_datas-eachpost {
+        width: 200px;
+        height: 70px;
+        display: flex;
+        img {
+          object-fit: cover;
+          width: 70px;
+        }
+        .eachpost_desc {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 5px 0 5px 2px;
+          .eachpost_desc-title {
+            color: white;
+            font-size: 13px;
+          }
+          .eachpost_desc-date {
+            color: white;
+            font-size: 9px;
+          }
+        }
+      }
+      .post_datas-eachpost_data {
+        vertical-align: middle;
+        text-align: center;
+        width: 50px;
+      }
+    }
+  }
+}

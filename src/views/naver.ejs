@@ -13,15 +13,70 @@
     </nav>
     <div class="container">
       <div class="container-post_trend">
-        <div class="container-post_lists"></div>
+        <div class="container-post_lists">
+          <!-- 반복문 들어가야함 -->
+          <% 
+            for(let i = 0; i<posts.length; i++){ 
+              let post = posts[i];
+              let titleName = '';
+              if(post.title.length > 25){
+                titleName = post.title.slice(0, 25) + '...';
+              }else{
+                titleName = post.title
+              }
+          %>
+          <div class="eachpost">
+            <img src=<%= posts[i].img %> />
+            <div class="eachpost_desc">
+              <span class="eachpost_desc-title"><%= titleName %></span>
+              <span class="eachpost_desc-date"> <%= post.uploadTime.toDateString() %> </span>
+            </div>
+          </div>
+          <%}%>
+        </div>
         <div class="container-post_charts"></div>
       </div>
       <div class="container-post_datas">
-        <div class="container-post_data-detail">
-          <div class="post-img"></div>
-          <div class="post-desc"></div>
-          <div class="post-trend"></div>
-        </div>
+        <table>
+          <thead>
+            <th>content\day</th>
+            <% for(let i =0; i<14; i++){%>
+              <th><%= i %></th>
+            <% } %>
+          </thead>
+          <tbody>
+            
+              <!-- 반복문 들어가야함 -->
+              <% 
+                for(let i = 0; i<posts.length; i++){ 
+                  let post = posts[i];
+                  let titleName = '';
+                  if(post.title.length > 25){
+                    titleName = post.title.slice(0, 25) + '...';
+                  }else{
+                    titleName = post.title
+                }
+              %>
+              <tr>
+                <td>          
+                  <div class="post_datas-eachpost">
+                    <img src=<%= posts[i].img %> />
+                    <div class="eachpost_desc">
+                      <span class="eachpost_desc-title"><%= titleName %></span>
+                      <span class="eachpost_desc-date"> <%= post.uploadTime.toDateString() %> </span>
+                    </div>
+                  </div>
+                </td>
+                <!-- post_datas-eachpost_data를 반복문으로 데이터를 끌어와야 함 -->
+                <!-- dayDataController에 fetch로 url값을 보내고 해당하는 ㄷ에이터를 일자별로 가져옴 -->
+                <td class="post_datas-eachpost_data">
+                  view <br> like
+                </td>
+
+              </tr>
+              <%}%>
+          </tbody>
+        </table>
       </div>
     </div>
   </body>

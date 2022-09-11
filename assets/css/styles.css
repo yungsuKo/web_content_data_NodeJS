@@ -182,12 +182,67 @@ form {
       margin: 10px;
       width: 200px;
       height: 380px;
-      border: 1px solid white; }
+      border: 1px solid white;
+      overflow: scroll; }
+      .container .container-post_trend .container-post_lists .eachpost {
+        margin: 5px;
+        height: 50px;
+        border: 1px solid lightblue;
+        display: flex; }
+        .container .container-post_trend .container-post_lists .eachpost img {
+          object-fit: cover;
+          width: 50px; }
+        .container .container-post_trend .container-post_lists .eachpost .eachpost_desc {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 5px 0 5px 2px; }
+          .container .container-post_trend .container-post_lists .eachpost .eachpost_desc .eachpost_desc-title {
+            color: white;
+            font-size: 11px; }
+          .container .container-post_trend .container-post_lists .eachpost .eachpost_desc .eachpost_desc-date {
+            color: white;
+            font-size: 9px; }
     .container .container-post_trend .container-post_charts {
       margin: 10px;
       width: 90%;
       height: 380px;
       border: 1px solid white; }
+  .container .container-post_datas {
+    border: solid 1px white;
+    height: 500px;
+    overflow: scroll; }
+    .container .container-post_datas table {
+      color: white;
+      border: 1px solid white; }
+      .container .container-post_datas table tr {
+        border: 1px solid white; }
+      .container .container-post_datas table th {
+        border: 1px solid white; }
+      .container .container-post_datas table td {
+        border: 1px solid white; }
+      .container .container-post_datas table .post_datas-eachpost {
+        width: 200px;
+        height: 70px;
+        display: flex; }
+        .container .container-post_datas table .post_datas-eachpost img {
+          object-fit: cover;
+          width: 70px; }
+        .container .container-post_datas table .post_datas-eachpost .eachpost_desc {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 5px 0 5px 2px; }
+          .container .container-post_datas table .post_datas-eachpost .eachpost_desc .eachpost_desc-title {
+            color: white;
+            font-size: 13px; }
+          .container .container-post_datas table .post_datas-eachpost .eachpost_desc .eachpost_desc-date {
+            color: white;
+            font-size: 9px; }
+      .container .container-post_datas table .post_datas-eachpost_data {
+        vertical-align: middle;
+        text-align: center;
+        width: 50px; }
 
 body {
   padding: 30px;
