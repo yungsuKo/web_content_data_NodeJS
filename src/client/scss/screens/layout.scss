@@ -46,12 +46,14 @@
   }
   .container-post_datas {
     border: solid 1px white;
-    height: 500px;
-    overflow: scroll;
 
+    overflow: scroll;
+    padding: 0px;
     table {
+      width: 95%;
       color: white;
       border: 1px solid white;
+      margin: 0 auto;
       tr {
         border: 1px solid white;
       }

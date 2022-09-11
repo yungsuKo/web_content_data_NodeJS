@@ -210,11 +210,13 @@ form {
       border: 1px solid white; }
   .container .container-post_datas {
     border: solid 1px white;
-    height: 500px;
-    overflow: scroll; }
+    overflow: scroll;
+    padding: 0px; }
     .container .container-post_datas table {
+      width: 95%;
       color: white;
-      border: 1px solid white; }
+      border: 1px solid white;
+      margin: 0 auto; }
       .container .container-post_datas table tr {
         border: 1px solid white; }
       .container .container-post_datas table th {

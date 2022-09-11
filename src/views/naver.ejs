@@ -69,10 +69,11 @@
                 </td>
                 <!-- post_datas-eachpost_data를 반복문으로 데이터를 끌어와야 함 -->
                 <!-- dayDataController에 fetch로 url값을 보내고 해당하는 ㄷ에이터를 일자별로 가져옴 -->
+                <% for(let i = 0; i< 14; i++){ %>
                 <td class="post_datas-eachpost_data">
                   view <br> like
                 </td>
-
+                <% } %>
               </tr>
               <%}%>
           </tbody>
