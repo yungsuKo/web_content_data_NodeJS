@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 try {
   mongoose.connect(
-    "mongodb+srv://tom:DGFQ6qIUTADEgWlf@cluster0.v4qfqfc.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://tom:DGFQ6qIUTADEgWlf@cluster0.v4qfqfc.mongodb.net/test?retryWrites=true&w=majority"
   );
 } catch (e) {
   console.log(e);
