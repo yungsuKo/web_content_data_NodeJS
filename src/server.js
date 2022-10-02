@@ -1,4 +1,5 @@
 import express from "express";
+import dotenv from "dotenv";
 import { application } from "express";
 import rootRouter from "./routers/rootRouter";
 import dataRouter from "./routers/dataRouter";
@@ -8,8 +9,9 @@ import bodyParser from "body-parser";
 import expressSession from "express-session";
 import "./db";
 
+dotenv.config();
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 5000;
 const logger = morgan(":url");
 app.use(express.static(__dirname + "/public"));
 
