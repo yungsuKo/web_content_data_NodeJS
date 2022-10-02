@@ -1,7 +1,13 @@
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://127.0.0.1:27017/content_crawling");
-const db = mongoose.connection;
+try {
+  mongoose.connect(
+    "mongodb+srv://tom:DGFQ6qIUTADEgWlf@cluster0.v4qfqfc.mongodb.net/?retryWrites=true&w=majority"
+  );
+  const db = mongoose.connection;
 
-const handleOpen = () => console.log("connected");
-db.once("open", handleOpen);
+  const handleOpen = () => console.log("connected");
+  db.once("open", handleOpen);
+} catch (e) {
+  console.log(e);
+}
