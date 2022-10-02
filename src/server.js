@@ -8,6 +8,10 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import expressSession from "express-session";
 import "./db";
+const crawler_kakao1Boon = require("./crawlers/1boon_crawler.js");
+const crawler_naverPost = require("./crawlers/post_crawler.js");
+const schedule = require("node-schedule");
+const { now } = require("mongoose");
 
 dotenv.config();
 const app = express();
@@ -47,3 +51,11 @@ app.set("views", process.cwd() + "/src/views");
 app.use("/", rootRouter);
 app.use("/data", dataRouter);
 app.use("/assets", express.static("assets"));
+
+var job = schedule.scheduleJob("0 06 0 * * *", async function () {
+  let mNow = new Date();
+  console.log(mNow);
+
+  await crawler_kakao1Boon();
+  await crawler_naverPost();
+});
