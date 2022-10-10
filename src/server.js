@@ -52,7 +52,7 @@ app.use("/", rootRouter);
 app.use("/data", dataRouter);
 app.use("/assets", express.static("assets"));
 
-var job = schedule.scheduleJob("0 06 0 * * *", async function () {
+var job = schedule.scheduleJob("0 5 0 * * *", async function () {
   let mNow = new Date();
   console.log(mNow);
 

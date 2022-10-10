@@ -64,9 +64,10 @@ module.exports = async function crawler_kakao1Boon() {
         .replace(elements.find("#article_head_view_count").text(), "");
       const fixed_uploadTime = await new Date(raw_uploadTime);
       fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
-      uploadTime = fixed_uploadTime.toISOString();
+      const uploadTime = fixed_uploadTime.toISOString();
 
       // 데이터 가공 - views
+      let views = null;
       const raw_views = elements.find("#article_head_view_count").text();
       if (raw_views.includes("만")) {
         // raw_views에서 "만" 문자열 제외 -> 데이터 타입 숫자로 변경 -> 곱하기 10,000

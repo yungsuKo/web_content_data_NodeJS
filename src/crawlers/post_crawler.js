@@ -84,6 +84,5 @@ module.exports = async function crawler_naverPost() {
     console.log(error);
   } finally {
     await browser.close();
-    process.exit(1);
   }
 };
