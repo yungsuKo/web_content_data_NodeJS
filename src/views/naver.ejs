@@ -55,26 +55,30 @@
                     titleName = post.title.slice(0, 25) + '...';
                   }else{
                     titleName = post.title
-                }
+                  }
               %>
-              <tr>
-                <td>          
-                  <div class="post_datas-eachpost">
-                    <img src=<%= posts[i].img %> />
-                    <div class="eachpost_desc">
-                      <span class="eachpost_desc-title"><%= titleName %></span>
-                      <span class="eachpost_desc-date"> <%= post.uploadTime.toDateString() %> </span>
+                <tr>
+                  <td>          
+                    <div class="post_datas-eachpost">
+                      <img src=<%= posts[i].img %> />
+                      <div class="eachpost_desc">
+                        <span class="eachpost_desc-title"><%= titleName %></span>
+                        <span class="eachpost_desc-date"> <%= post.uploadTime.toDateString() %> </span>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <!-- post_datas-eachpost_data를 반복문으로 데이터를 끌어와야 함 -->
-                <!-- dayDataController에 fetch로 url값을 보내고 해당하는 ㄷ에이터를 일자별로 가져옴 -->
-                <% for(let i = 0; i< 14; i++){ %>
-                <td class="post_datas-eachpost_data">
-                  view <br> like
-                </td>
-                <% } %>
-              </tr>
+                  </td>
+                  <!-- post_datas-eachpost_data를 반복문으로 데이터를 끌어와야 함 -->
+                  <!-- dayDataController에 fetch로 url값을 보내고 해당하는 ㄷ에이터를 일자별로 가져옴 -->
+                  <% for(let i = 0; i< 14; i++){ %>
+                    <td class="post_datas-eachpost_data">
+                      <%= post.views %> 
+                      <br> 
+                      <%= post.likes%>
+                      <br> 
+                      <%= Math.floor((post.crawledTime.getTime()-post.uploadTime.getTime())/(1000*60*60*24))%>
+                    </td>
+                  <% } %>
+                </tr>
               <%}%>
           </tbody>
         </table>
