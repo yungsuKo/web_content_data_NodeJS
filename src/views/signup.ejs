@@ -1,31 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%-include('./part/header');%>
-  </head>
-  <body>
-    <nav id="navigation_bar">
-      <ul class="menu_list">
-        <a class="menu_list summary"><li>Summary</li></a>
-        <a class="menu_list naver"><li>Naver</li></a>
-        <a class="menu_list kakao"><li>Kakao</li></a>
-      </ul>
-    </nav>
-    <div id="pageTitle"><%=pageTitle%></div>
-    <div id="container">
-      <form method="post" action="/signup">
-        <div>
-          <label>ID </label>
-          <input type="text" placeholder="ID" name="id" />
+    <head>
+        <%-include('./part/head');%>
+    </head>
+    <body>
+        <header>
+            <nav id="navigation_bar">
+                <div id="pageTitle"><%=pageTitle%></div>
+            </nav>
+        </header>
+        <div id="pageDescription">
+            <% if(pageDescription){ %>
+                <%= pageDescription %>
+            <% } %>
         </div>
-        <div>
-          <label>PASSWORD </label>
-          <input type="password" placeholder="password" name="password" />
+    
+        <div id="container">
+            <span>
+                <% if(errorMsg){ %>
+                    <%= errorMsg %>
+                <% } %>
+            </span>
+            <form method="post" action="/signup">
+                <!-- <div>
+                    <label>profile image </label>
+                    <input type="file" name="profile_img" required ="true"/>
+                </div> -->
+                <div>
+                    <label>ID </label>
+                    <input type="email" placeholder="ID" name="id" required ="true"/>
+                </div>
+                <div>
+                    <label>PASSWORD </label>
+                    <input type="password" placeholder="password" name="password" required ="true"/>
+                </div>
+                <div>
+                    <label>Check PASSWORD </label>
+                    <input type="password" placeholder="check your password" name="password2" required ="true"/>
+                </div>
+                <div class="login-form__submit">
+                    <input type="submit" value="signup" />
+                </div>
+            </form>
         </div>
-        <div class="login-form__submit">
-          <input type="submit" value="signup" />
-        </div>
-      </form>
-    </div>
-  </body>
+    </body>
 </html>

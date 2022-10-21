@@ -134,121 +134,16 @@ table {
 /*!**********************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/client/scss/styles.scss ***!
   \**********************************************************************************************************************/
-#navigation_bar {
-  display: flex;
-  justify-content: space-between; }
-  #navigation_bar .menu_list {
-    padding-right: 20px; }
-
-.menu_list {
+header {
   width: 80%;
   display: flex;
   justify-content: space-between;
-  color: #ffffff; }
-
-#pageTitle {
-  margin-top: 100px;
-  font-size: 30px;
-  color: white; }
-
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px; }
-  form div {
-    display: flex;
-    justify-content: space-between;
-    width: 500px; }
-    form div label {
-      color: white; }
-    form div input {
-      width: 80%;
-      height: 50px; }
-  form .login-form__submit {
-    margin-top: 50px;
-    width: 100%;
-    justify-content: center; }
-
-.container {
-  margin-top: 50px;
-  border: 1px solid white;
-  width: 80%;
-  height: 400px; }
-  .container .container-post_trend {
-    display: flex;
-    justify-content: space-between; }
-    .container .container-post_trend .container-post_lists {
-      margin: 10px;
-      width: 200px;
-      height: 380px;
-      border: 1px solid white;
-      overflow: scroll; }
-      .container .container-post_trend .container-post_lists .eachpost {
-        margin: 5px;
-        height: 50px;
-        border: 1px solid lightblue;
-        display: flex; }
-        .container .container-post_trend .container-post_lists .eachpost img {
-          object-fit: cover;
-          width: 50px; }
-        .container .container-post_trend .container-post_lists .eachpost .eachpost_desc {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 5px 0 5px 2px; }
-          .container .container-post_trend .container-post_lists .eachpost .eachpost_desc .eachpost_desc-title {
-            color: white;
-            font-size: 11px; }
-          .container .container-post_trend .container-post_lists .eachpost .eachpost_desc .eachpost_desc-date {
-            color: white;
-            font-size: 9px; }
-    .container .container-post_trend .container-post_charts {
-      margin: 10px;
-      width: 90%;
-      height: 380px;
-      border: 1px solid white; }
-  .container .container-post_datas {
-    border: solid 1px white;
-    overflow: scroll;
-    padding: 0px; }
-    .container .container-post_datas table {
-      width: 95%;
-      color: white;
-      border: 1px solid white;
-      margin: 0 auto; }
-      .container .container-post_datas table tr {
-        border: 1px solid white; }
-      .container .container-post_datas table th {
-        border: 1px solid white; }
-      .container .container-post_datas table td {
-        border: 1px solid white; }
-      .container .container-post_datas table .post_datas-eachpost {
-        width: 200px;
-        height: 70px;
-        display: flex; }
-        .container .container-post_datas table .post_datas-eachpost img {
-          object-fit: cover;
-          width: 70px; }
-        .container .container-post_datas table .post_datas-eachpost .eachpost_desc {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 5px 0 5px 2px; }
-          .container .container-post_datas table .post_datas-eachpost .eachpost_desc .eachpost_desc-title {
-            color: white;
-            font-size: 13px; }
-          .container .container-post_datas table .post_datas-eachpost .eachpost_desc .eachpost_desc-date {
-            color: white;
-            font-size: 9px; }
-      .container .container-post_datas table .post_datas-eachpost_data {
-        vertical-align: middle;
-        text-align: center;
-        width: 50px; }
+  align-items: center; }
+  header select {
+    margin: auto 0; }
 
 body {
   padding: 30px;
-  background-color: black;
   display: flex;
   flex-direction: column;
   align-items: center; }
