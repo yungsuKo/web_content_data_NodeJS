@@ -1,14 +1,13 @@
 import express from "express";
 import {
-  summaryController,
-  naverController,
-  kakaoController,
+  getDataListController,
+  postDataListController,
+  dataDetailController
 } from "../controllers/dataController";
 import { protectorMiddleware } from "../middlewares";
 const dataRouter = express.Router();
 
-dataRouter.route("/summary").all(protectorMiddleware).get(summaryController);
-dataRouter.route("/naver").all(protectorMiddleware).get(naverController);
-dataRouter.route("/kakao").all(protectorMiddleware).get(kakaoController);
+dataRouter.route("/").all(protectorMiddleware).get(getDataListController).post(postDataListController);
+dataRouter.route("/detail/:id").all(protectorMiddleware).get(dataDetailController);
 
 export default dataRouter;

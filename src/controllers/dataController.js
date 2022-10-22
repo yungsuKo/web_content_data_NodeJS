@@ -3,25 +3,30 @@ import "../db";
 import BoonData from "../models/KaKao_1boon";
 import PostData from "../models/Naver_post";
 
-export const summaryController = (req, res) => {
+export const getDataListController = (req, res) => {
   try {
-    res.render("summary", {
-      title: "Summary",
+    const crawlUrl = req.body.crawlUrl;
+    console.log(req.body)
+    res.render("list_data", {
+      title: "List Data",
     });
   } catch (e) {
     console.log(e);
   }
 };
-export const kakaoController = (req, res) => {
+export const postDataListController = (req, res) => {
   try {
-    res.render("kakao", {
-      title: "KaKao",
+    const crawlUrl = req.body.crawlUrl;
+    console.log(crawlUrl)
+    res.render("list_data", {
+      title: "List Data",
     });
   } catch (e) {
     console.log(e);
   }
 };
-export const naverController = async (req, res) => {
+
+export const dataDetailController = async (req, res) => {
   try {
     // 배열을 2중 배열로 넘겨야 할 듯
     // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
@@ -29,8 +34,8 @@ export const naverController = async (req, res) => {
       .sort({ uploadTime: -1, crawledTime: -1 })
       .limit(10);
     console.log(posts);
-    res.render("naver", {
-      title: "Naver",
+    res.render("detail_data", {
+      title: "detail",
       posts,
     });
   } catch (e) {

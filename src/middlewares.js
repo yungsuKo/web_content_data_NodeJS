@@ -8,7 +8,7 @@ export const protectorMiddleware = (req, res, next) => {
 
 export const publicMiddleware = (req, res, next) => {
   if (req.session.loggedIn) {
-    res.redirect("/data/summary");
+    res.redirect("/data");
   } else {
     next();
   }

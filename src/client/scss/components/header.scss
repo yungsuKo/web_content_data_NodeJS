@@ -1,9 +1,11 @@
 header{
     width: 80%;
+    padding: 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    select{
-        margin: auto 0;
+    background-color: rgb(72, 72, 72);
+    #pageTitle{
+        color: white;
     }
 }
