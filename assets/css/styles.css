@@ -144,6 +144,9 @@ header {
   header #pageTitle {
     color: white; }
 
+.crawl-item {
+  width: 20%; }
+
 section {
   margin-top: 50px;
   width: 80%;
@@ -160,6 +163,9 @@ section {
     padding: 10px;
     margin-top: 30px;
     align-items: center; }
+
+main {
+  display: flex; }
 
 body {
   background-color: #777777;
