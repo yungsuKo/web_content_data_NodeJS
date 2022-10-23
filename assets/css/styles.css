@@ -145,9 +145,20 @@ header {
     color: white; }
 
 section {
-  margin-top: 50px; }
+  margin-top: 50px;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+  section .crawldata-description h4 {
+    font-size: 24px;
+    color: #bbbbbb;
+    font-weight: 600; }
+  section .crawldata-description ul {
+    margin-top: 10px; }
   section form {
     padding: 10px;
+    margin-top: 30px;
     align-items: center; }
 
 body {

@@ -1,7 +1,7 @@
 // db연결 어떻게 하지
 import "../db";
-import BoonData from "../models/KaKao_1boon";
 import PostData from "../models/Naver_post";
+import CrawlData from "../models/CrawlUrl";
 
 export const getDataListController = (req, res) => {
   try {
@@ -9,6 +9,8 @@ export const getDataListController = (req, res) => {
     console.log(req.body)
     res.render("list_data", {
       title: "List Data",
+      errorMsg : ""
+
     });
   } catch (e) {
     console.log(e);
@@ -17,9 +19,22 @@ export const getDataListController = (req, res) => {
 export const postDataListController = (req, res) => {
   try {
     const crawlUrl = req.body.crawlUrl;
-    console.log(crawlUrl)
-    res.render("list_data", {
+    // crawlUrl에 대한 정합성 검증
+    if(!crawlUrl.includes("https://post.naver.com/") || !crawlUrl.includes("https://content.v.daum.net/")){
+      return res.render("list_data", {
+        title: "List Data",
+        errorMsg : "아직 지원하지 않는 url 입니다."
+      });
+    }
+    // 정합성이 확인되면 저장
+    CrawlData.insertMany({
+      createTime : Date.now(),
+      url : crawlUrl,
+      owner : req.session.user._id
+    })
+    return res.render("list_data", {
       title: "List Data",
+      errorMsg : ""
     });
   } catch (e) {
     console.log(e);
