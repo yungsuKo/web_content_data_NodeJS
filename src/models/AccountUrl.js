@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const crawlDataSchema = new mongoose.Schema({
     createTime : Date,
     url : String,
+    accountId : String,
+    platform : String,
     owner : {type: mongoose.Types.ObjectId, required: true, ref:"User"}
 })
 

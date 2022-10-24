@@ -1,7 +1,7 @@
 // db연결 어떻게 하지
 import "../db";
 import PostData from "../models/Naver_post";
-import CrawlData from "../models/CrawlUrl";
+import CrawlData from "../models/AccountUrl";
 import postUrlCrawl1 from "../crawlers/postUrlCrawler"
 
 export const getDataListController = async(req, res) => {
@@ -30,14 +30,39 @@ export const postDataListController = async (req, res) => {
                 dataList:[]
             });
         }
-        // 정합성이 확인되면 저장
-        const url = await CrawlData.insertMany({
-            createTime : Date.now(),
-            url : crawlUrl,
-            owner : req.session.user._id
-        })
+        // 네이버 url 인지
+        const isnaver = crawlUrl.includes("https://post.naver.com/")
+        // 중복 여부
+        const exist = await CrawlData.exists({url : crawlUrl});
+        if(exist){
+            return res.render("list_data", {
+                title: "List Data",
+                errorMsg : "이미 저장하고 있는 계정입니다.",
+                dataList:[]
+            });
+        }
+
+        // 정합성&중복여부가 확인되면 저장
+        // 네이버, 카카오 분류하여 저장 >> accountID를 받기 위함
+        if(isnaver){
+            const url = await CrawlData.insertMany({
+                createTime : Date.now(),
+                url : crawlUrl,
+                accountId: crawlUrl.split("/")[3].split("=")[1],
+                platform : "naver",
+                owner : req.session.user._id
+            })
+        } else{
+            const url = await CrawlData.insertMany({
+                createTime : Date.now(),
+                url : crawlUrl,
+                accountId: crawlUrl.split("/")[3],
+                platform : "kakao",
+                owner : req.session.user._id
+            })
+        }
         console.log(url);
-        await postUrlCrawl1(crawlUrl)
+        await postUrlCrawl1(url)
         // postUrlCrawl1
 
         return res.render("list_data", {
