@@ -2,6 +2,7 @@
 import "../db";
 import PostData from "../models/Naver_post";
 import CrawlData from "../models/CrawlUrl";
+import postUrlCrawl1 from "../crawlers/postUrlCrawler"
 
 export const getDataListController = async(req, res) => {
   try {
@@ -11,32 +12,38 @@ export const getDataListController = async(req, res) => {
     res.render("list_data", {
       title: "List Data",
       errorMsg : "",
-      dataList
+      dataList:[]
     });
   } catch (e) {
     console.log(e);
   }
 };
 
-export const postDataListController = (req, res) => {
+export const postDataListController = async (req, res) => {
     try {
         const crawlUrl = req.body.crawlUrl;
         // crawlUrl에 대한 정합성 검증
-        if(!crawlUrl.includes("https://post.naver.com/") || !crawlUrl.includes("https://content.v.daum.net/")){
+        if(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://content.v.daum.net/")){
             return res.render("list_data", {
                 title: "List Data",
-                errorMsg : "아직 지원하지 않는 url 입니다."
+                errorMsg : "아직 지원하지 않는 url 입니다.",
+                dataList:[]
             });
         }
         // 정합성이 확인되면 저장
-        CrawlData.insertMany({
+        const url = await CrawlData.insertMany({
             createTime : Date.now(),
             url : crawlUrl,
             owner : req.session.user._id
         })
+        console.log(url);
+        await postUrlCrawl1(crawlUrl)
+        // postUrlCrawl1
+
         return res.render("list_data", {
             title: "List Data",
-            errorMsg : ""
+            errorMsg : "",
+            dataList : []
         });
     } catch (e) {
         console.log(e);
