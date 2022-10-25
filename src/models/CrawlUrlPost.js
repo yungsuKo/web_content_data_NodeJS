@@ -5,7 +5,8 @@ const crawlPostDataSchema = new mongoose.Schema({
     uploadTime : Date,
     img : String,
     postUrl : String,
-    url : {type: String, required: true, ref:"CrawlData"}
+    url : {type: String, required: true, ref:"CrawlData"},
+    title: String
 })
 
 const CrawlPostData = mongoose.model("CrawlPostData", crawlPostDataSchema)

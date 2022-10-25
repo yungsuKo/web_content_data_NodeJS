@@ -1,12 +1,13 @@
+
+
 <div class="crawl-item">
     <img src="#"/>
     <div class="crawl-item__description">
         <div class="crawl-item__description-title">
-            <p>여기는 제목이 들어가요</p>
+            <h3><%=data.accountName%></h3>
         </div>
         <div class="crawl-item__description-numbers">
-            <span>조회수</span>
-            <span>좋아요수</span>
+            <span>생성일자 : <%=data.createTime.toISOString().split('T')[0]%></span>
         </div>    
     </div>
 </div>

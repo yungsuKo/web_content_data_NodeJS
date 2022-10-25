@@ -30,14 +30,14 @@ module.exports = async function postUrlCrawl1(url){
             height: 768,
         });
         // "https://www.goodchoice.kr/product/search/2" URL에 접속한다. (여기어때 호텔 페이지)
-        await page.goto(`${url.url}`);
+        await page.goto(`${url[0].url}`);
         console.log("waiting for loading");
         await delay(1000);
         console.log("loading end");
         // 페이지의 HTML을 가져온다.
         const content = await page.content();
         const $ = cheerio.load(content);
-        if(url.platform == "naver"){
+        if(url[0].platform == "naver"){
             const $postLists = $("div.inner_feed_box");
             let list = [];
             $postLists.each(function (i, elem) {
@@ -62,7 +62,8 @@ module.exports = async function postUrlCrawl1(url){
                     uploadTime,
                     postUrl: $(this).find("a.link_end").attr("href"),
                     img: $(this).find("a.link_end img").attr("src"),
-                    url : url.url
+                    url : url[0].url,
+                    title: $(this).find("strong.tit_feed").text().replace("\n", "")
                 });
             });
             console.log(list);
@@ -80,56 +81,50 @@ module.exports = async function postUrlCrawl1(url){
 
             let list = [];
             for (let i = 0; i < 20; i++) {
-            await page.goto(`https:${urlList[i]}`);
-            console.log(`https:${urlList[i]}`);
+                await page.goto(`https:${urlList[i]}`);
+                console.log(`https:${urlList[i]}`);
 
-            const content = await page.content();
-            const $ = cheerio.load(content);
-            const elements = $(".box_line");
+                const content = await page.content();
+                const $ = cheerio.load(content);
+                const elements = $(".box_line");
 
-            await delay(1000);
+                await delay(1000);
 
-            // 데이터 가공 - uploadTime
-            const raw_uploadTime = await elements
-                .find(".info_view .txt_info .num_date")
-                .text()
-                .replace(elements.find("#article_head_view_count").text(), "");
-            const fixed_uploadTime = await new Date(raw_uploadTime);
-            fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
-            const uploadTime = fixed_uploadTime.toISOString();
+                // 데이터 가공 - uploadTime
+                const raw_uploadTime = await elements
+                    .find(".info_view .txt_info .num_date")
+                    .text()
+                    .replace(elements.find("#article_head_view_count").text(), "");
+                const fixed_uploadTime = await new Date(raw_uploadTime);
+                fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
+                const uploadTime = fixed_uploadTime.toISOString();
 
-            // 데이터 가공 - views
-            let views = null;
-            const raw_views = elements.find("#article_head_view_count").text();
-            if (raw_views.includes("만")) {
-                // raw_views에서 "만" 문자열 제외 -> 데이터 타입 숫자로 변경 -> 곱하기 10,000
-                views = Number(raw_views.replace("만", "")) * 10000;
-            } else {
-                // raw_views의 데이터 타입을 숫자로 변경
-                views = Number(raw_views.replace(",", ""));
-            }
+                // 데이터 가공 - views
+                let views = null;
+                const raw_views = elements.find("#article_head_view_count").text();
+                if (raw_views.includes("만")) {
+                    // raw_views에서 "만" 문자열 제외 -> 데이터 타입 숫자로 변경 -> 곱하기 10,000
+                    views = Number(raw_views.replace("만", "")) * 10000;
+                } else {
+                    // raw_views의 데이터 타입을 숫자로 변경
+                    views = Number(raw_views.replace(",", ""));
+                }
 
-            list[i] = new BoonData({
-                crawledTime: timestamp(),
-                uploadTime,
-                // 위에서 가공한 데이터를 끌어다씀
-                link: urlList[i],
-                img: elements.find("img.thumb_g_article").attr("src"),
-                views,
-                // 위에서 가공한 데이터를 끌어다씀
-                likes: elements
-                .find("button[data-action-type='LIKE'] span.🎬_count_label")
-                .text(),
-                series: "undefined",
-                title: elements.find(".tit_view").text().replace("\n", ""),
-            });
-            console.log(list[i]);
+                list[i] = new CrawlPostData({
+                    createTime: timestamp(),
+                    uploadTime,
+                    img: elements.find("img.thumb_g_article").attr("src"),
+                    postUrl: urlList[i],
+                    url : url[0].url,
+                    title: elements.find(".tit_view").text().replace("\n", ""),
+                });
+                console.log(list[i]);
             }
 
             try {
-            await BoonData.insertMany(list);
+                await CrawlPostData.insertMany(list);
             } catch (e) {
-            console.log(e);
+                console.log(e);
             }
         }
     // const lists = $("#lst_feed > #inner_feed_box");

@@ -1,18 +1,18 @@
 // db연결 어떻게 하지
 import "../db";
-import PostData from "../models/Naver_post";
-import CrawlData from "../models/AccountUrl";
-import postUrlCrawl1 from "../crawlers/postUrlCrawler"
+import AccountUrl from "../models/AccountUrl";
+import CrawlPostData from "../models/CrawlUrlPost";
+import postUrlCrawl1 from "../crawlers/postUrlCrawler";
 
 export const getDataListController = async(req, res) => {
   try {
     const crawlUrl = req.body.crawlUrl;
-    const dataList = await CrawlData.find();
+    const dataList = await AccountUrl.find();
     console.log(req.body)
     res.render("list_data", {
       title: "List Data",
       errorMsg : "",
-      dataList:[]
+      dataList
     });
   } catch (e) {
     console.log(e);
@@ -21,54 +21,59 @@ export const getDataListController = async(req, res) => {
 
 export const postDataListController = async (req, res) => {
     try {
-        const crawlUrl = req.body.crawlUrl;
+        const {crawlUrl, accountName} = req.body;
+        let dataList = await AccountUrl.find({})
         // crawlUrl에 대한 정합성 검증
         if(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://content.v.daum.net/")){
             return res.render("list_data", {
                 title: "List Data",
                 errorMsg : "아직 지원하지 않는 url 입니다.",
-                dataList:[]
+                dataList
             });
         }
         // 네이버 url 인지
-        const isnaver = crawlUrl.includes("https://post.naver.com/")
+        const isnaver = await crawlUrl.includes("https://post.naver.com/")
         // 중복 여부
-        const exist = await CrawlData.exists({url : crawlUrl});
+        const exist = await AccountUrl.exists({url : crawlUrl});
         if(exist){
             return res.render("list_data", {
                 title: "List Data",
                 errorMsg : "이미 저장하고 있는 계정입니다.",
-                dataList:[]
+                dataList
             });
         }
 
+        let url = null;
         // 정합성&중복여부가 확인되면 저장
         // 네이버, 카카오 분류하여 저장 >> accountID를 받기 위함
         if(isnaver){
-            const url = await CrawlData.insertMany({
+            url = await AccountUrl.insertMany({
                 createTime : Date.now(),
                 url : crawlUrl,
                 accountId: crawlUrl.split("/")[3].split("=")[1],
+                accountName,
                 platform : "naver",
                 owner : req.session.user._id
             })
         } else{
-            const url = await CrawlData.insertMany({
+            url = await AccountUrl.insertMany({
                 createTime : Date.now(),
                 url : crawlUrl,
                 accountId: crawlUrl.split("/")[3],
+                accountName,
                 platform : "kakao",
                 owner : req.session.user._id
             })
         }
         console.log(url);
+        // postUrlCrawl1 : 신규 계정이 최초 입력되었을 때, 크롤링해야하는 글 목록이 크롤링됨
         await postUrlCrawl1(url)
-        // postUrlCrawl1
-
+        
+        dataList = await AccountUrl.find({})
         return res.render("list_data", {
             title: "List Data",
             errorMsg : "",
-            dataList : []
+            dataList
         });
     } catch (e) {
         console.log(e);

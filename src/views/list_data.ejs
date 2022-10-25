@@ -17,14 +17,15 @@
 			</ul>
 		</div>
 		<form method="post">
+			<input type="text", placeholder="계정 별칭을 입력해주세요", required, name="accountName">
 			<input type="text", placeholder="트래킹할 url을 입력하세여", required, name="crawlUrl">
 			<input type="submit", value="입력하기">
 		</form>
 		</section>
 		<main>
-			<% for(i=0; i < dataList.length; i++){ %>
-				<%-include('./mixins/crawlItem')%>
-			<% } %>
+			<% dataList.forEach(function(data){ %>
+				<%-include('./mixins/crawlItem', {data: data});%>
+			<% }) %>
 
 		</main>
 	</body>
