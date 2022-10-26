@@ -4,6 +4,8 @@ const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
 const CrawlPostData = require("../models/CrawlUrlPost")
 
+let crawlUrlList = []
+
 // 게시글 url에서 수집해야하는 데이터
 function timestamp() {
     var today = new Date();
@@ -68,7 +70,7 @@ module.exports = async function postUrlCrawl1(url){
             });
             console.log(list);
             try {
-                await CrawlPostData.insertMany(list);
+                crawlUrlList = await CrawlPostData.insertMany(list);
             } catch (e) {
                 console.log(e);
             }
@@ -122,13 +124,13 @@ module.exports = async function postUrlCrawl1(url){
             }
 
             try {
-                await CrawlPostData.insertMany(list);
+                crawlUrlList = await CrawlPostData.insertMany(list);
             } catch (e) {
                 console.log(e);
             }
         }
     // const lists = $("#lst_feed > #inner_feed_box");
-        return console.log("crawling finished!");
+        return crawlUrlList;
     } catch (error) {
         console.log(error);
     } finally {

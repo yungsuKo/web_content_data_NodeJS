@@ -1,13 +1,19 @@
-
-
-<div class="crawl-item">
-    <img src="#"/>
-    <div class="crawl-item__description">
-        <div class="crawl-item__description-title">
-            <h3><%=data.accountName%></h3>
+<a href="detail/<%=data._id%>">
+    <div class="crawl-item">
+        <% if(data.platform === "kakao"){ %>
+            <i class="fa-solid fa-comment"></i>
+        <%} else if(data.platform === "naver"){%>
+            <i class="fa-solid fa-n"></i>    
+        <%} else{%>
+            <i class="fa-solid fa-question"></i>
+        <% }%>
+        <div class="crawl-item__description">
+            <div class="crawl-item__description-title">
+                <h3><%=data.accountName%></h3>
+            </div>
+            <div class="crawl-item__description-numbers">
+                <span>생성일자 : <%=data.createTime.toISOString().split('T')[0]%></span>
+            </div>    
         </div>
-        <div class="crawl-item__description-numbers">
-            <span>생성일자 : <%=data.createTime.toISOString().split('T')[0]%></span>
-        </div>    
     </div>
-</div>
+</a>

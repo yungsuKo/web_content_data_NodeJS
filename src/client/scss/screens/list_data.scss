@@ -1,9 +1,9 @@
-section{
-    padding: 20px;
-    margin-top: 50px;
-    width : 100%;
+.url__submit-form{
+    padding: 50px;
+    margin: 50px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     .crawldata-description{
         h4{

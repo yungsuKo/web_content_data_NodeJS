@@ -1,0 +1,16 @@
+main{
+    justify-content: center;
+    .container-post_trend{
+        width : 80%;
+        height : 300px;
+        border: solid 1px black;
+        display: flex;
+
+    }
+    .container-post_datas{
+        width: 100%;
+        display : flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+}

@@ -5,23 +5,23 @@
   	</head>
 	<body>
 		<%-include('./part/header');%>
-		<section>
-		<div class = "crawldata-description">
-			<h4>현재 크롤링이 가능한 페이지는 아래와 같습니다.</h4>
-			<% if(errorMsg){ %>
-				<p><%=errorMsg %></p>
-			<% } %>
-			<ul>
-				<li>1. 네이버 포스트</li>
-				<li>2. 카카오 1boon</li>
-			</ul>
+		<div class="url__submit-form">
+			<div class = "crawldata-description">
+				<h4>현재 크롤링이 가능한 페이지는 아래와 같습니다.</h4>
+				<% if(locals.errorMsg){ %>
+					<p><%=errorMsg %></p>
+				<% } %>
+				<ul>
+					<li>1. 네이버 포스트</li>
+					<li>2. 카카오 1boon</li>
+				</ul>
+			</div>
+			<form method="post">
+				<input type="text", placeholder="계정 별칭을 입력해주세요", required, name="accountName">
+				<input type="text", placeholder="트래킹할 url을 입력하세여", required, name="crawlUrl">
+				<input type="submit", value="입력하기">
+			</form>
 		</div>
-		<form method="post">
-			<input type="text", placeholder="계정 별칭을 입력해주세요", required, name="accountName">
-			<input type="text", placeholder="트래킹할 url을 입력하세여", required, name="crawlUrl">
-			<input type="submit", value="입력하기">
-		</form>
-		</section>
 		<main>
 			<% dataList.forEach(function(data){ %>
 				<%-include('./mixins/crawlItem', {data: data});%>

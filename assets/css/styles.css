@@ -148,7 +148,13 @@ header {
     margin-right: 50px; }
 
 .crawl-item {
-  min-width: 250px; }
+  display: flex;
+  flex-direction: column;
+  margin: 30px; }
+  .crawl-item .fa-solid {
+    font-size: 50px;
+    margin: auto;
+    margin-bottom: 20px; }
 
 .signup_btn {
   margin-top: 50px;
@@ -156,20 +162,20 @@ header {
   padding: 10px;
   border-radius: 10px; }
 
-section {
-  padding: 20px;
-  margin-top: 50px;
-  width: 100%;
+.url__submit-form {
+  padding: 50px;
+  margin: 50px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center; }
-  section .crawldata-description h4 {
+  .url__submit-form .crawldata-description h4 {
     font-size: 24px;
     color: #bbbbbb;
     font-weight: 600; }
-  section .crawldata-description ul {
+  .url__submit-form .crawldata-description ul {
     margin-top: 10px; }
-  section form {
+  .url__submit-form form {
     padding: 10px;
     margin-top: 30px;
     align-items: center; }
@@ -179,6 +185,19 @@ main {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 50px; }
+
+main {
+  justify-content: center; }
+  main .container-post_trend {
+    width: 80%;
+    height: 300px;
+    border: solid 1px black;
+    display: flex; }
+  main .container-post_datas {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 30px; }
 
 body {
   background-color: #777777;

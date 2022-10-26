@@ -5,84 +5,25 @@
   	</head>
 	<body>
 		<%-include('./part/header');%>
-		<section>
-		<form>
-			<input type="text", placeholder="트래킹할 url을 입력하세여", required>
-			<input type="submit", value="입력하기">
-		</form>
-		</section>
-		<section>
-		<div class="container-post_trend">
-			<div class="container-post_lists">
-			<!-- 반복문 들어가야함 -->
-			<% 
-				for(let i = 0; i<posts.length; i++){ 
-				let post = posts[i];
-				let titleName = '';
-				if(post.title.length > 25){
-					titleName = post.title.slice(0, 25) + '...';
-				}else{
-					titleName = post.title
-				}
-			%>
-			<div class="eachpost">
-				<img src=<%= posts[i].img %> />
-				<div class="eachpost_desc">
-				<span class="eachpost_desc-title"><%= titleName %></span>
-				<span class="eachpost_desc-date"> <%= post.uploadTime.toDateString() %> </span>
-				</div>
+		<main>
+			<div class="container-post_trend">
+				<div class="container-post_lists"></div>
+				<div class="container-post_charts"></div>
 			</div>
-			<%}%>
+			<div class="container-post_datas">
+				<table>
+					<thead>
+						<th>content\day</th>
+						<% for(let i =0; i<14; i++){%>
+						<th><%= i %></th>
+						<% } %>
+					</thead>
+					<tbody>
+						
+						
+					</tbody>
+				</table>
 			</div>
-			<div class="container-post_charts"></div>
-		</div>
-		<div class="container-post_datas">
-			<table>
-			<thead>
-				<th>content\day</th>
-				<% for(let i =0; i<14; i++){%>
-				<th><%= i %></th>
-				<% } %>
-			</thead>
-			<tbody>
-				
-				<!-- 반복문 들어가야함 -->
-				<% 
-					for(let i = 0; i<posts.length; i++){ 
-					let post = posts[i];
-					let titleName = '';
-					if(post.title.length > 25){
-						titleName = post.title.slice(0, 25) + '...';
-					}else{
-						titleName = post.title
-					}
-				%>
-					<tr>
-					<td>          
-						<div class="post_datas-eachpost">
-						<img src=<%= posts[i].img %> />
-						<div class="eachpost_desc">
-							<span class="eachpost_desc-title"><%= titleName %></span>
-							<span class="eachpost_desc-date"> <%= post.uploadTime.toDateString() %> </span>
-						</div>
-						</div>
-					</td>
-					<!-- post_datas-eachpost_data를 반복문으로 데이터를 끌어와야 함 -->
-					<!-- dayDataController에 fetch로 url값을 보내고 해당하는 ㄷ에이터를 일자별로 가져옴 -->
-					<% for(let i = 0; i< 14; i++){ %>
-						<td class="post_datas-eachpost_data">
-						<%= post.views %> 
-						<br> 
-						<%= post.likes %>
-						<br> 
-						<%= Math.floor((post.crawledTime.getTime()-post.uploadTime.getTime())/(1000*60*60*24))%>
-						</td>
-					<% } %>
-					</tr>
-				<%}%>
-			</tbody>
-			</table>
-		</div>
-		</section>
+		</main>
 	</body>
 </html>
