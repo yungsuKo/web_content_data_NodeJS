@@ -2,6 +2,7 @@
 import "../db";
 import AccountUrl from "../models/AccountUrl";
 import CrawlPostData from "../models/CrawlUrlPost";
+import postDetail1 from "../crawlers/postDetailCrawler";
 import postUrlCrawl1 from "../crawlers/postUrlCrawler";
 
 export const getDataListController = async(req, res) => {
@@ -66,8 +67,10 @@ export const postDataListController = async (req, res) => {
         }
         console.log(url);
         // postUrlCrawl1 : 신규 계정이 최초 입력되었을 때, 크롤링해야하는 글 목록이 크롤링됨
-        await postUrlCrawl1(url)
-        
+        const urlList = await postUrlCrawl1(url)
+        for(let i=0; i<urlList.length; i++){
+            await postDetail1(urlList[i], url);
+        }
         dataList = await AccountUrl.find({})
         return res.render("list_data", {
             title: "List Data",

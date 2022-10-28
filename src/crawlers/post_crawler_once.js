@@ -11,12 +11,12 @@ async function crawler_naverPost() {
     return new Promise(function (resolve) {
       setTimeout(resolve, time);
     });
-  }
+  };
   function timestamp() {
     var today = new Date();
     today.setHours(today.getHours() + 9);
     return today.toISOString();
-  }
+  };
   // 브라우저를 실행한다.
   // 옵션으로 headless모드를 끌 수 있다.
   const browser = await puppeteer.launch({

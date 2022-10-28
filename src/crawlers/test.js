@@ -31,18 +31,26 @@ async function crawler_naverPost() {
       height: 768,
     });
     // "https://www.goodchoice.kr/product/search/2" URL에 접속한다. (여기어때 호텔 페이지)
-    await page.goto("https://post.naver.com/viewer/postView.naver?volumeNo=34436477&memberNo=24659848");
+    await page.goto("https://v.daum.net/v/126RBzVs6j");
     console.log("waiting for loading");
     await delay(1000);
     console.log("loading end");
     // 페이지의 HTML을 가져온다.
     const content = await page.content();
     const $ = cheerio.load(content);
-    const view = $('span.se_view').text();
-    const likes = $('a#btn_like_end em.u_cnt._cnt').text();
-    const comments = $('span.u_cbox_count').text();
-    const views = view.replace("읽음","");
-    console.log(views, likes, comments)
+    const raw_views = $('span.txt_info:nth-child(1)').text();
+    const views = String(Number(raw_views.split(' ')[1].replace('만',''))*10000);
+    const recommend = $('[data-action-type="RECOMMEND"] span.🎬_count_label').text();
+    const like = $('[data-action-type="LIKE"] span.🎬_count_label').text();
+    const impress = $('[data-action-type="IMPRESS"] span.🎬_count_label').text();
+
+    // const comments = $('span.u_cbox_count').text();
+
+    console.log(views);
+    console.log(recommend);
+    console.log(like);
+    console.log(impress);
+
     // const lists = $("#lst_feed > #inner_feed_box");
     return console.log("crawling finished!");
   } catch (error) {

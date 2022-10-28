@@ -4,8 +4,9 @@ import {
   postLogin,
   getSignup,
   postSignup,
+  logout
 } from "../controllers/userController";
-import { publicMiddleware } from "../middlewares";
+import { publicMiddleware, protectorMiddleware } from "../middlewares";
 
 const rootRouter = express.Router();
 
@@ -15,5 +16,5 @@ rootRouter
   .all(publicMiddleware)
   .get(getSignup)
   .post(postSignup);
-
+rootRouter.route("/logout").get(logout)
 export default rootRouter;

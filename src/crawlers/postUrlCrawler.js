@@ -2,7 +2,8 @@ require("../db");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
-const CrawlPostData = require("../models/CrawlUrlPost")
+const CrawlPostData = require("../models/CrawlUrlPost");
+const PostDetail = require("../models/PostDetail");
 
 let crawlUrlList = []
 
@@ -69,6 +70,7 @@ module.exports = async function postUrlCrawl1(url){
                 });
             });
             console.log(list);
+            // 리스트에 저장되어있는 post url들의 detail을 하나씩 뽑음
             try {
                 crawlUrlList = await CrawlPostData.insertMany(list);
             } catch (e) {
@@ -90,7 +92,7 @@ module.exports = async function postUrlCrawl1(url){
                 const $ = cheerio.load(content);
                 const elements = $(".box_line");
 
-                await delay(1000);
+                await delay(300);
 
                 // 데이터 가공 - uploadTime
                 const raw_uploadTime = await elements
