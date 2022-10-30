@@ -9,8 +9,8 @@ import bodyParser from "body-parser";
 import expressSession from "express-session";
 import MongoStore from "connect-mongo";
 import "./db";
-const crawler_kakao1Boon = require("./crawlers/1boon_crawler.js");
-const crawler_naverPost = require("./crawlers/post_crawler.js");
+// const crawler_kakao1Boon = require("./crawlers/1boon_crawler.js");
+// const crawler_naverPost = require("./crawlers/post_crawler.js");
 const schedule = require("node-schedule");
 const { now } = require("mongoose");
 
@@ -57,10 +57,10 @@ app.use("/", rootRouter);
 app.use("/data", dataRouter);
 app.use("/assets", express.static("assets"));
 
-var job = schedule.scheduleJob("0 5 0 * * *", async function () {
-  let mNow = new Date();
-  console.log(mNow);
+// var job = schedule.scheduleJob("0 5 0 * * *", async function () {
+//   let mNow = new Date();
+//   console.log(mNow);
 
-  await crawler_kakao1Boon();
-  await crawler_naverPost();
-});
+//   await crawler_kakao1Boon();
+//   await crawler_naverPost();
+// });
