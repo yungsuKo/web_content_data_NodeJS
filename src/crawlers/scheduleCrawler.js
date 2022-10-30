@@ -19,7 +19,7 @@ function timestamp() {
 }
 
 // 계정 url을 조회했을 때, DB에 저장되지 않은 게시물 url이 있으면 크롤링하여 저장함
-async function schedulePostCrawler(accountUrl){
+module.exports = async function schedulePostCrawler(accountUrl){
     let crawlUrlList;
     const browser = await puppeteer.launch({
         headless: false,
@@ -45,42 +45,40 @@ async function schedulePostCrawler(accountUrl){
         if(url[0].platform == "naver"){
             const $postLists = $("div.inner_feed_box");
             let list = [];
-            try{
-                $postLists.each(function (i, elem) {
-                    const exist = CrawlUrlPost.exists({postUrl:$(this).find("a.link_end").attr("href")});
-                    if(exist){
-                        throw BreakError;
-                    }
-                    const raw_uploadTime = $(this)
-                        .find("time.date_post")
-                        .text()
-                        .replace("\n", "")
-                        .trim();
-                    let uploadTime = "";
-                    if (raw_uploadTime.includes("시간")) {
-                        const timeOver = Number(raw_uploadTime.replace("시간 전", ""));
-                        const timeNow = new Date(timestamp());
-                        uploadTime = timeNow.setHours(timeNow.getHours() - timeOver);
-                    } else {
-                        uploadTime = new Date(raw_uploadTime);
-                        uploadTime.setHours(uploadTime.getHours() + 9);
-                        uploadTime.toISOString();
-                    }
-            
-                    list[i] = new CrawlUrlPost({
-                        createTime: timestamp(),
-                        uploadTime,
-                        postUrl: $(this).find("a.link_end").attr("href"),
-                        img: $(this).find("a.link_end img").attr("src"),
-                        url : url[0].url,
-                        title: $(this).find("strong.tit_feed").text().replace("\n", "")
-                    });
+            $postLists.each(function (i, elem) {
+                const raw_uploadTime = $(this)
+                    .find("time.date_post")
+                    .text()
+                    .replace("\n", "")
+                    .trim();
+                let uploadTime = "";
+                if (raw_uploadTime.includes("시간")) {
+                    const timeOver = Number(raw_uploadTime.replace("시간 전", ""));
+                    const timeNow = new Date(timestamp());
+                    uploadTime = timeNow.setHours(timeNow.getHours() - timeOver);
+                } else {
+                    uploadTime = new Date(raw_uploadTime);
+                    uploadTime.setHours(uploadTime.getHours() + 9);
+                    uploadTime.toISOString();
+                }
+        
+                list[i] = new CrawlUrlPost({
+                    createTime: timestamp(),
+                    uploadTime,
+                    postUrl: $(this).find("a.link_end").attr("href"),
+                    img: $(this).find("a.link_end img").attr("src"),
+                    url : url[0].url,
+                    title: $(this).find("strong.tit_feed").text().replace("\n", "")
                 });
-            }catch(err) {
-                if(err !== BreakError) throw err;
-            }
+            });
             console.log(list);
-            // 리스트에 저장되어있는 post url들의 detail을 하나씩 뽑음
+            // list 내에 있는 url을 for 문으로 한 번씩 돌림
+            for(let i=0; i<list.length; i++){
+                const exist = await CrawlUrlPost.exists({postUrl:list[i].postUrl});
+                if (exist){
+                    list.splice(i,1);
+                }
+            }
             try {
                 crawlUrlList = await CrawlUrlPost.insertMany(list);
             } catch (e) {
@@ -94,7 +92,7 @@ async function schedulePostCrawler(accountUrl){
             });
             console.log(urlList)
             let list = [];
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 10; i++) {
                 await page.goto(`https:${urlList[i]}`);
                 console.log(`https:${urlList[i]}`);
 
@@ -102,10 +100,6 @@ async function schedulePostCrawler(accountUrl){
                 const $ = cheerio.load(content);
                 const elements = $(".box_line");
 
-                const exist = await CrawlUrlPost.exists({postUrl:urlList[i]});
-                if(exist){
-                    break;
-                }
                 await delay(300);
                 // 데이터 가공 - uploadTime
                 const raw_uploadTime = await elements
@@ -135,10 +129,16 @@ async function schedulePostCrawler(accountUrl){
                     url : url[0].url,
                     title: elements.find(".tit_view").text().replace("\n", ""),
                 });
-                console.log(list[i]);
+                console.log(list[i]);   
             }
-
-            try {
+            // 여기서 for문 한번 더 돌려서 이미 DB에 있는 배열 값은 날려주자..
+            for(let i=0; i<list.length; i++){
+                const exist = await CrawlUrlPost.exists({postUrl:list[i].postUrl});
+                if (exist){
+                    list.splice(i,1);
+                }
+            }
+            try {    
                 crawlUrlList = await CrawlUrlPost.insertMany(list);
             } catch (e) {
                 console.log(e);
@@ -150,22 +150,70 @@ async function schedulePostCrawler(accountUrl){
         await browser.close();
     }
 }
-const url = [
-    {
-        createTime: "2022-10-28T11:55:58.060+00:00",
-        url: "https://content.v.daum.net/2124/contents",
-        platform: "kakao"
-    }
-]
-console.log(url[0]);
-schedulePostCrawler(url[0]);
-
-
-
-
 
 // 최근 7일 이내 발행됩 게시물을 입력 받고, 해당 게시물들의 상세정보를 크롤링한다.
+module.exports = async function scheduleDetailCrawler(postEachUrl, accountUrl){
+    // 계정별로 for문 돌리고
+    // 7일 이내 업로드 된 postUrl을 입력받고,
+    // 해당 url에 접근하여 detail 정보를 받아옴.
+    const browser = await puppeteer.launch({
+        headless: false,
+    });
+    try {
+        let detailData = {};
+        // 새로운 페이지를 연다.
+        const page = await browser.newPage();
+        const createTime = timestamp();
+        // 페이지의 크기를 설정한다.
+        await page.setViewport({
+            width: 1366,
+            height: 768,
+        });
 
-async function scheduleDetailCrawler(){
+        let content;
+        let $;
+        if(accountUrl.platform == "naver"){
+            await page.goto(postEachUrl.postUrl);
+            await delay(10);
+            content = await page.content();
+            $ = cheerio.load(content);
+            const raw_views = $('span.se_view').text();
+            const views = raw_views.replace("읽음","");
+            const likes = $('a#btn_like_end em.u_cnt._cnt').text();
+            const comments = $('span.u_cbox_count').text();
+            
+            detailData = {
+                createTime,
+                views,
+                likes,
+                comments,
+                postUrl : postEachUrl._id
+            };
+        }else{
+            console.log("https:"+postEachUrl.postUrl);
+            await page.goto("https:"+postEachUrl.postUrl);
+            await delay(10);
+            content = await page.content();
+            $ = cheerio.load(content);
+            const raw_views = $('span.txt_info:nth-child(1)').text();
+            const views = String(Number(raw_views.split(' ')[1].replace('만',''))*10000);
+            const recommend = Number($('[data-action-type="RECOMMEND"] span.🎬_count_label').text());
+            const like = Number($('[data-action-type="LIKE"] span.🎬_count_label').text());
+            const impress = Number($('[data-action-type="IMPRESS"] span.🎬_count_label').text());
+            const likes = recommend+like+impress;
+            detailData = {
+                createTime,
+                views,
+                likes,
+                comments:"",
+                postUrl : postEachUrl._id
+            };
+        }
+        await PostDetail.insertMany(detailData)
 
+    } catch (e) {
+        console.log(e);
+    } finally {
+        await browser.close();
+    }
 }
