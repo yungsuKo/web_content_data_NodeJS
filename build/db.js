@@ -1,12 +1,15 @@
-const mongoose = require("mongoose");
+"use strict";
+
+var mongoose = require("mongoose");
 
 mongoose.connect(process.env.MONGODB_KEY);
-const db = mongoose.connection;
+var db = mongoose.connection;
 
-const handleOpen = () => console.log("connected");
+var handleOpen = function handleOpen() {
+  return console.log("connected");
+};
+
 db.once("open", handleOpen);
-db.once("error", err => {
+db.once("error", function (err) {
   throw "failed connect to MongoDB";
-});
-
-// ------------------------
+}); // ------------------------

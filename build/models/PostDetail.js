@@ -1,12 +1,17 @@
-const mongoose = require('mongoose');
+"use strict";
 
-const postDetailSchema = new mongoose.Schema({
-    createTime: Date,
-    views: String,
-    likes: String,
-    comments: String,
-    postUrl: { type: String, required: true, ref: "CrawlPostData" }
+var mongoose = require('mongoose');
+
+var postDetailSchema = new mongoose.Schema({
+  createTime: Date,
+  views: String,
+  likes: String,
+  comments: String,
+  postUrl: {
+    type: String,
+    required: true,
+    ref: "CrawlPostData"
+  }
 });
-
-const PostDetail = mongoose.model("PostDetail", postDetailSchema);
+var PostDetail = mongoose.model("PostDetail", postDetailSchema);
 module.exports = PostDetail;

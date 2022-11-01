@@ -1,6 +1,8 @@
-const mongoose = require("mongoose");
+"use strict";
 
-const postDataSchema = new mongoose.Schema({
+var mongoose = require("mongoose");
+
+var postDataSchema = new mongoose.Schema({
   crawledTime: Date,
   uploadTime: Date,
   link: String,
@@ -10,6 +12,5 @@ const postDataSchema = new mongoose.Schema({
   views: Number,
   likes: Number
 });
-
-const PostData = mongoose.model("PostData", postDataSchema);
+var PostData = mongoose.model("PostData", postDataSchema);
 module.exports = PostData;

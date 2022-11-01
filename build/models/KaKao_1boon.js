@@ -1,6 +1,8 @@
-const mongoose = require("mongoose");
+"use strict";
 
-const boonDataSchema = new mongoose.Schema({
+var mongoose = require("mongoose");
+
+var boonDataSchema = new mongoose.Schema({
   crawledTime: Date,
   uploadTime: Date,
   link: String,
@@ -10,6 +12,5 @@ const boonDataSchema = new mongoose.Schema({
   views: Number,
   likes: Number
 });
-
-const BoonData = mongoose.model("BoonData", boonDataSchema);
+var BoonData = mongoose.model("BoonData", boonDataSchema);
 module.exports = BoonData;
