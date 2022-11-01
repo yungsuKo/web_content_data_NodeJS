@@ -14,13 +14,19 @@
 				<table>
 					<thead>
 						<th>content\day</th>
-						<% for(let i =0; i<14; i++){%>
-						<th><%= i %></th>
+						<% for(let i =0; i<7; i++){%>
+							<th><%= i %></th>
 						<% } %>
 					</thead>
 					<tbody>
-						
-						
+						<% for(let i =0; i<7; i++){%>
+							<tr>
+								<th><%= i %></th>
+								<% for(let i =0; i<7; i++){%>
+									<td></td>
+								<% } %>
+							</tr>
+						<% } %>
 					</tbody>
 				</table>
 			</div>
