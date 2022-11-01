@@ -10,7 +10,7 @@ var crawlPostDataSchema = new mongoose.Schema({
   url: {
     type: String,
     required: true,
-    ref: "CrawlData"
+    ref: "AccountUrl"
   },
   title: String
 });

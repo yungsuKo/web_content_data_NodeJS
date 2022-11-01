@@ -2,6 +2,7 @@
 import "../db";
 import AccountUrl from "../models/AccountUrl";
 import CrawlPostData from "../models/CrawlUrlPost";
+import PostDetail from "../models/PostDetail";
 import postDetail1 from "../crawlers/postDetailCrawler";
 import postUrlCrawl1 from "../crawlers/postUrlCrawler";
 
@@ -86,11 +87,21 @@ export const dataDetailController = async (req, res) => {
     try {
         // 배열을 2중 배열로 넘겨야 할 듯
         // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
-        const {id} = req.query;
-        console.log(id)
+        const {id} = req.params;
+        console.log(id);
+        const accounturl = await AccountUrl.findById(id);
+        const postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean();
+        console.log(postUrls);
+        const details = [];
+        for(let i=0; i<postUrls.length; i++){
+            let detail = await PostDetail.find({postUrl:postUrls[i]._id});
+            details.push(detail);
+        }
+        console.log(details);
         res.render("detail_data", {
             title: "detail",
-    
+            postUrls,
+            details
         });
     } catch (e) {
         console.log(e);
