@@ -87,6 +87,7 @@ export const dataDetailController = async (req, res) => {
     try {
         // 배열을 2중 배열로 넘겨야 할 듯
         // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
+        // 이거 데이터 뿌려주기 위한 데이터 구조를 다시 한 번 보는게 좋을 듯..
         const {id} = req.params;
         console.log(id);
         const accounturl = await AccountUrl.findById(id);
