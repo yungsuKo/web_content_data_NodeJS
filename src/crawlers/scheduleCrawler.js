@@ -42,7 +42,7 @@ module.exports = async function schedulePostCrawler(accountUrl){
         const content = await page.content();
         const $ = cheerio.load(content);
         
-        if(url[0].platform == "naver"){
+        if(accountUrl.platform == "naver"){
             const $postLists = $("div.inner_feed_box");
             let list = [];
             $postLists.each(function (i, elem) {
