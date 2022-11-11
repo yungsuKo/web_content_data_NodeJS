@@ -7,6 +7,8 @@ const AccountUrl = require("../models/AccountUrl");
 const CrawlUrlPost = require("../models/CrawlUrlPost");
 const PostDetail = require("../models/PostDetail");
 
+// 가장 최근의 것만 확인한 후 제외하는 현상있음.
+
 function delay(time) {
     return new Promise(function (resolve) {
         setTimeout(resolve, time);

@@ -10,7 +10,7 @@ import scheduleDetailCrawler from "./crawlers/scheduleCrawler";
 const schedule = require("node-schedule");
 const { now } = require("mongoose");
 
-var job = schedule.scheduleJob("10 10 8 * * *", async function () {
+var job = schedule.scheduleJob("10 44 19 * * *", async function () {
     let mNow = new Date();
     mNow.setDate(mNow.getDate()-7);
     console.log(mNow.toString());
