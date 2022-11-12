@@ -87,14 +87,16 @@ async function schedulePostCrawler(accountUrl){
                 console.log(e);
             }
         }else{
+            
             const $postLists = $("a.link_column");
             let urlList = [];
+            // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
             $postLists.each(function (i, elem) {
                 urlList[i] = $(this).attr("href");
             });
             console.log(urlList)
             let list = [];
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 10; i++) {
                 await page.goto(`https:${urlList[i]}`);
                 console.log(`https:${urlList[i]}`);
 

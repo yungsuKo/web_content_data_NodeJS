@@ -1,8 +1,8 @@
-require("../db");
+require("../../db");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
-const BoonData = require("../models/KaKao_1boon");
+const BoonData = require("../../models/KaKao_1boon");
 
 // 출처: https://hbesthee.tistory.com/1737 [채윤이네집:티스토리]
 
