@@ -110,7 +110,7 @@ async function schedulePostCrawler(accountUrl){
                     .find(".info_view .txt_info .num_date")
                     .text()
                     .replace(elements.find("#article_head_view_count").text(), "");
-                const fixed_uploadTime = await new Date(raw_uploadTime);
+                const fixed_uploadTime = new Date(raw_uploadTime);
                 fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
                 const uploadTime = fixed_uploadTime.toISOString();
 

@@ -47,21 +47,22 @@ async function schedulePostCrawler(accountUrl){
         const $postLists = $("a.link_column");
         
         // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
-        const urlList = function(){
-            let urlList = [];
-            $postLists.each(async function (i, elem) {
-                let postUrl = $(this).attr("href");
-                const postExist = await CrawlUrlPost.exists({ postUrl : postUrl });
-                if (!postExist) {
-                    console.log(postUrl);
-                    urlList.push(postUrl);
-                }
-            });
-            return urlList;
+        
+        let urlList = [];
+        // $postLists.each(async function (i, elem) {    
+        //     let newPostUrl = elem.attribs.href;
+        //     const postExist = await CrawlUrlPost.exists({ postUrl : newPostUrl });
+        //     if (!postExist) {
+        //         urlList[i] = newPostUrl;
+        //     }
+        // });
+        for (let [i, elem] in Object.entries($postLists)){
+            console.log(i, elem);
         }
-    
+        
         let list = [];
         for (let i = 0; i < urlList.length; i++) {
+            console.log("이게 먼저 나오니..?")
             await page.goto(`https:${urlList[i]}`);
             console.log(`https:${urlList[i]}`);
 
