@@ -56,8 +56,15 @@ async function schedulePostCrawler(accountUrl){
         //         urlList[i] = newPostUrl;
         //     }
         // });
-        for (let [i, elem] in Object.entries($postLists)){
-            console.log(i, elem);
+        for (let elem in $postLists){
+            if(!$postLists[elem].attribs){
+                break;
+            }
+            let newPostUrl = $postLists[elem].attribs.href;
+            const postExist = await CrawlUrlPost.exists({ postUrl : newPostUrl });
+            if (!postExist) {
+                urlList.push(newPostUrl);
+            }
         }
         
         let list = [];
