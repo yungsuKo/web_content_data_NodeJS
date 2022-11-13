@@ -86,13 +86,32 @@ module.exports = async function schedulePostCrawler(accountUrl){
             }
         }else{
             const $postLists = $("a.link_column");
+            // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
             let urlList = [];
-            $postLists.each(function (i, elem) {
-                urlList[i] = $(this).attr("href");
-            });
-            console.log(urlList)
+            /**  jquery의 .each 는 비동기 처리를 함. 
+            // each 문을 벗어나지 못하는 현상이 있어서 for - in 구문을 사용함
+            // $postLists.each(async function (i, elem) {    
+            //     let newPostUrl = elem.attribs.href;
+            //     const postExist = await CrawlUrlPost.exists({ postUrl : newPostUrl });
+            //     if (!postExist) {
+            //         urlList[i] = newPostUrl;
+            //     }
+                });
+            */
+            for (let elem in $postLists){
+                if(!$postLists[elem].attribs){
+                    break;
+                }
+                let newPostUrl = $postLists[elem].attribs.href;
+                const postExist = await CrawlUrlPost.exists({ postUrl : newPostUrl });
+                if (!postExist) {
+                    urlList.push(newPostUrl);
+                }
+            }
+        
             let list = [];
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < urlList.length; i++) {
+                console.log("이게 먼저 나오니..?")
                 await page.goto(`https:${urlList[i]}`);
                 console.log(`https:${urlList[i]}`);
 
@@ -126,24 +145,16 @@ module.exports = async function schedulePostCrawler(accountUrl){
                     uploadTime,
                     img: elements.find("img.thumb_g_article").attr("src"),
                     postUrl: urlList[i],
-                    url : url[0].url,
+                    url : accountUrl.url,
                     title: elements.find(".tit_view").text().replace("\n", ""),
-                });
-                console.log(list[i]);   
-            }
-            // 여기서 for문 한번 더 돌려서 이미 DB에 있는 배열 값은 날려주자..
-            for(let i=0; i<list.length; i++){
-                const exist = await CrawlUrlPost.exists({postUrl:list[i].postUrl});
-                if (exist){
-                    list.splice(i,1);
+                }); 
+                }
+                try {    
+                    crawlUrlList = await CrawlUrlPost.insertMany(list);
+                } catch (e) {
+                    console.log(e);
                 }
             }
-            try {    
-                crawlUrlList = await CrawlUrlPost.insertMany(list);
-            } catch (e) {
-                console.log(e);
-            }
-        }
     } catch (error) {
         console.log(error);
     } finally {

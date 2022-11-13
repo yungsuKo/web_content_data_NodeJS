@@ -10,7 +10,6 @@ var accountUrlSchema = new mongoose.Schema({
   platform: String,
   owner: {
     type: mongoose.Types.ObjectId,
-    required: true,
     ref: "User"
   }
 });

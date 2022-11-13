@@ -34,7 +34,7 @@ async function schedulePostCrawler(accountUrl){
             width: 1366,
             height: 768,
         });
-        // "https://www.goodchoice.kr/product/search/2" URL에 접속한다. (여기어때 호텔 페이지)
+        // URL에 접속한다.
         console.log(accountUrl);
         await page.goto(accountUrl.url);
         console.log("waiting for loading");
@@ -45,17 +45,18 @@ async function schedulePostCrawler(accountUrl){
         const $ = cheerio.load(content);
 
         const $postLists = $("a.link_column");
-        
         // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
-        
         let urlList = [];
+        /**  jquery의 .each 는 비동기 처리를 함. 
+        // each 문을 벗어나지 못하는 현상이 있어서 for - in 구문을 사용함
         // $postLists.each(async function (i, elem) {    
         //     let newPostUrl = elem.attribs.href;
         //     const postExist = await CrawlUrlPost.exists({ postUrl : newPostUrl });
         //     if (!postExist) {
         //         urlList[i] = newPostUrl;
         //     }
-        // });
+            });
+        */
         for (let elem in $postLists){
             if(!$postLists[elem].attribs){
                 break;
@@ -106,21 +107,6 @@ async function schedulePostCrawler(accountUrl){
                 url : accountUrl.url,
                 title: elements.find(".tit_view").text().replace("\n", ""),
             });
-            console.log(list[i]);   
-        
-        // 여기서 for문 한번 더 돌려서 이미 DB에 있는 배열 값은 날려주자..
-            // for(let i=0; i<list.length; i++){
-            //     const exist = await CrawlUrlPost.exists({postUrl:list[i].postUrl});
-            //     if (exist){
-            //         list.splice(i,1);
-            //     }
-            // }
-            console.log(list);
-            // try {    
-            //     crawlUrlList = await CrawlUrlPost.insertMany(list);
-            // } catch (e) {
-            //     console.log(e);
-            // }
         }
     } catch (error) {
         console.log(error);
