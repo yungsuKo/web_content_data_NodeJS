@@ -10,7 +10,7 @@ import scheduleDetailCrawler from "./crawlers/scheduleCrawler";
 const schedule = require("node-schedule");
 const { now } = require("mongoose");
 
-var job = schedule.scheduleJob("00 00 00 * * *", async function () {
+var job = schedule.scheduleJob("00 00 02 * * *", async function () {
     let mNow = new Date();
     mNow.setDate(mNow.getDate()-7);
     // mNow는 시작일로부터 7일 이전의 값을 의미함. 
