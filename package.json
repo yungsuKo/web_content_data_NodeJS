@@ -19,7 +19,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    
     "axios": "^0.27.2",
     "babel-loader": "^8.2.5",
     "bcrypt": "^5.0.1",
@@ -38,6 +37,7 @@
     "node-sass": "^7.0.1",
     "node-schedule": "^2.1.0",
     "nodemon": "^2.0.19",
+    "pm2": "^5.2.2",
     "puppeteer": "^18.0.5",
     "sass-loader": "^13.0.2",
     "scss": "^0.2.4"
