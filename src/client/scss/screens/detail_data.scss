@@ -8,10 +8,40 @@ main{
 
     }
     .container-post_datas{
-        width: 100%;
+        width: 80%;
         display : flex;
         justify-content: center;
         margin-top: 30px;
-
+        table{
+            width: 100%;
+            tbody{
+                tr{
+                    th{
+                        display: flex;
+                        .post-item__img{
+                            img{
+                                width: 80px;
+                                height: 50px;
+                                object-fit: cover;
+                            }
+                        }
+                        .post-item__desc{
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                    }
+                    td{
+                        vertical-align:inherit ;
+                        .post-item__data{
+                            display: flex;
+                            height: 100%;
+                            flex-direction: column;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

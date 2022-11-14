@@ -92,14 +92,39 @@ export const dataDetailController = async (req, res) => {
         console.log(id);
         const accounturl = await AccountUrl.findById(id);
         if(id === "63704211cfa4b03494152789"){
-            
+            let postUrls = [
+                {
+                    postTitle : "aaa",
+                    img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
+                    uploadTime : "2022-10-11",
+                    index : [0,1,2,3,4,5,6],
+                    views : [0,1,2,3,4,5,6],
+                    likes : [0,1,2,3,4,5,6]
+                },
+                {
+                    postTitle : "bbb",
+                    img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
+                    uploadTime : "2022-10-10",
+                    index : [0,1,2,3,4,5,6],
+                    views : [0,1,2,3,4,5,6],
+                    likes : [0,1,2,3,4,5,6]
+                },
+                {
+                    postTitle : "ccc",
+                    img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
+                    uploadTime : "2022-10-09",
+                    index : [0,1,2,3,4,5,6],
+                    views : [0,1,2,3,4,5,6],
+                    likes : [0,1,2,3,4,5,6]
+                }
+            ]
             return res.render("detail_data", {
                 title: "detail",
                 postUrls,
                 details : []
             });
         }
-        const postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean();
+        postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean();
         console.log(postUrls);
         const details = [];
         for(let i=0; i<postUrls.length; i++){

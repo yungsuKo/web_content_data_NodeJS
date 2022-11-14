@@ -111,21 +111,18 @@ module.exports = async function schedulePostCrawler(accountUrl){
         
             let list = [];
             for (let i = 0; i < urlList.length; i++) {
-                console.log("이게 먼저 나오니..?")
                 await page.goto(`https:${urlList[i]}`);
-                console.log(`https:${urlList[i]}`);
-
                 const content = await page.content();
                 const $ = cheerio.load(content);
                 const elements = $(".box_line");
 
                 await delay(300);
                 // 데이터 가공 - uploadTime
-                const raw_uploadTime = await elements
+                const raw_uploadTime = elements
                     .find(".info_view .txt_info .num_date")
                     .text()
                     .replace(elements.find("#article_head_view_count").text(), "");
-                const fixed_uploadTime = await new Date(raw_uploadTime);
+                const fixed_uploadTime = new Date(raw_uploadTime);
                 fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
                 const uploadTime = fixed_uploadTime.toISOString();
 

@@ -19,17 +19,29 @@
 						<% } %>
 					</thead>
 					<tbody>
-						<% for(let i =0; i<7; i++){%>
+						<% for(let i =0; i<postUrls.length; i++){%>
 							<!-- tr에는 하나의 게시물에 대한 정보가 들어가 있어야함 -->
 							<tr>
 								<th>
-									<%= postUrls[i] %>
-									<%= postUrls[i].uploadTime %>
+									<div class="post-item__img">
+										<img src="<%= postUrls[i].img %>"/>
+									</div>
+									<div class="post-item__desc">
+										<div class="post-item__desc-title"><%= postUrls[i].postTitle %></div>
+										<div class="post-item__desc-upload"><%= postUrls[i].uploadTime %></div>
+									</div>
 								</th>
 								<!-- 열안에 th에서는 행을 대표하는 게시물의 정보가 들어가 있어야함 -->
-								<% for(let j =0; j<7; j++){%>
+								<% for(let j =0; j<postUrls[i].index.length; j++){%>
 									<td>
-										<%= details[i][j] %>
+										<div class="post-item__data">
+											<div class="post-item__data-views">
+												<%= postUrls[i].views[j] %>
+											</div>
+											<div class="post-item__data-likes">
+												<%= postUrls[i].likes[j] %>
+											</div>
+										</div>
 									</td>
 								<% } %>
 							</tr>
