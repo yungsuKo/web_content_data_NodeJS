@@ -10,7 +10,7 @@ import scheduleDetailCrawler from "./crawlers/scheduleCrawler";
 const schedule = require("node-schedule");
 const { now } = require("mongoose");
 
-var job = schedule.scheduleJob("00 11 * * * *", async function () {
+var job = schedule.scheduleJob("00 * * * * *", async function () {
     let mNow = new Date();
     mNow.setDate(mNow.getDate()-7);
     // mNow는 시작일로부터 7일 이전의 값을 의미함. 
@@ -19,12 +19,13 @@ var job = schedule.scheduleJob("00 11 * * * *", async function () {
     for (let i=0; i<accountUrls.length; i++){
         // 계정 url을 하나씩 순회하여 게시물 정보를 업데이트함
         // 포스트 db에서 계정 url을 기준으로 뽑음
+        console.log(accountUrls[i]);
         await schedulePostCrawler(accountUrls[i]);
         const postUrls = await CrawlUrlPost.find({
-            uploadTime:{$gt : mNow}
+            uploadTime:{$gt : mNow},
         });
-        console.log(postUrls);
-        for (let j=0; j<postUrls.length; j++){
+        for (let j=0; j<postUrls.length; j++){ 
+            console.log(accountUrls[i]);
             await scheduleDetailCrawler(postUrls[j], accountUrls[i]);
         }
     }

@@ -23,7 +23,8 @@ module.exports = async function schedulePostCrawler(accountUrl){
     let crawlUrlList;
     const browser = await puppeteer.launch({
         headless: false,
-      });
+    });
+    console.log(accountUrl);
     try {
         // 새로운 페이지를 연다.
         const page = await browser.newPage();
@@ -169,6 +170,7 @@ module.exports = async function scheduleDetailCrawler(postEachUrl, accountUrl){
     });
     try {
         let detailData = {};
+        const postData = await CrawlUrlPost.findById(postEachUrl._id);
         // 새로운 페이지를 연다.
         const page = await browser.newPage();
         const createTime = timestamp();
@@ -180,6 +182,7 @@ module.exports = async function scheduleDetailCrawler(postEachUrl, accountUrl){
 
         let content;
         let $;
+        console.log(accountUrl);
         if(accountUrl.platform == "naver"){
             await page.goto(postEachUrl.postUrl);
             await delay(10);
@@ -198,7 +201,7 @@ module.exports = async function scheduleDetailCrawler(postEachUrl, accountUrl){
                 postUrl : postEachUrl._id
             };
         }else{
-            console.log("https:"+postEachUrl.postUrl);
+            
             await page.goto("https:"+postEachUrl.postUrl);
             await delay(10);
             content = await page.content();
@@ -217,7 +220,10 @@ module.exports = async function scheduleDetailCrawler(postEachUrl, accountUrl){
                 postUrl : postEachUrl._id
             };
         }
-        await PostDetail.insertMany(detailData)
+        const detailDataSaved = await PostDetail.insertMany(detailData);
+        console.log(detailDataSaved);
+        postData.postDetails.push(detailDataSaved[0]._id);
+        await postData.save();
 
     } catch (e) {
         console.log(e);

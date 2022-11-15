@@ -25,7 +25,7 @@ export const postDataListController = async (req, res) => {
         const {crawlUrl, accountName} = req.body;
         let dataList = await AccountUrl.find({})
         // crawlUrl에 대한 정합성 검증
-        if(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://v.daum.net/")){
+        if(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://content.v.daum.net/")){
             return res.render("list_data", {
                 title: "List Data",
                 errorMsg : "아직 지원하지 않는 url 입니다.",
@@ -124,7 +124,8 @@ export const dataDetailController = async (req, res) => {
                 details : []
             });
         }
-        postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7);
+        postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7).populate("");
+
         console.log("postUrls : ",postUrls);
         const details = [];
         // for(let i=0; i<postUrls.length; i++){

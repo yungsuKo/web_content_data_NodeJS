@@ -2,6 +2,7 @@ require("../db");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
+const CrawlUrlPost = require("../models/CrawlUrlPost");
 const PostDetail = require("../models/PostDetail")
 
 // 게시글 url에서 수집해야하는 데이터
@@ -23,6 +24,7 @@ module.exports = async function postDetail1(postEachUrl, accountUrl){
     });
     try {
         let detailData = {};
+        const postData = await CrawlUrlPost.findById(postEachUrl._id);
         // 새로운 페이지를 연다.
         const page = await browser.newPage();
         const createTime = timestamp();
@@ -71,7 +73,11 @@ module.exports = async function postDetail1(postEachUrl, accountUrl){
                 postUrl : postEachUrl._id
             };
         }
-        await PostDetail.insertMany(detailData)
+        const detailDataSaved = await PostDetail.insertMany(detailData);
+        console.log(detailDataSaved);
+        postData.postDetails.push(detailDataSaved[0]._id);
+        await postData.save();
+        console.log(postData);
 
     } catch (e) {
         console.log(e);

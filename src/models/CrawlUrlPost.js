@@ -6,7 +6,7 @@ const crawlPostDataSchema = new mongoose.Schema({
     img : String,
     postUrl : String,
     postDetails : [{type: mongoose.Types.ObjectId, ref:"PostDetail"}],
-    url : {type: String, required: true, ref:"CrawlData"},
+    url : {type: String, required: true, ref:"AccountUrl"},
     title: String
 })
 
