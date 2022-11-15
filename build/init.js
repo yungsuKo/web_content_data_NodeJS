@@ -29,14 +29,15 @@ var schedule = require("node-schedule");
 var _require = require("mongoose"),
     now = _require.now;
 
-var job = schedule.scheduleJob("10 0 0 * * *", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+var job = schedule.scheduleJob("00 11 * * * *", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
   var mNow, accountUrls, i, postUrls, j;
   return _regeneratorRuntime().wrap(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           mNow = new Date();
-          mNow.setDate(mNow.getDate() - 7);
+          mNow.setDate(mNow.getDate() - 7); // mNow는 시작일로부터 7일 이전의 값을 의미함. 
+
           console.log(mNow.toString());
           _context.next = 5;
           return _AccountUrl["default"].find({});

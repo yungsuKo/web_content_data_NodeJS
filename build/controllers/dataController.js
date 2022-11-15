@@ -13,6 +13,8 @@ var _AccountUrl = _interopRequireDefault(require("../models/AccountUrl"));
 
 var _CrawlUrlPost = _interopRequireDefault(require("../models/CrawlUrlPost"));
 
+var _PostDetail = _interopRequireDefault(require("../models/PostDetail"));
+
 var _postDetailCrawler = _interopRequireDefault(require("../crawlers/postDetailCrawler"));
 
 var _postUrlCrawler = _interopRequireDefault(require("../crawlers/postUrlCrawler"));
@@ -83,7 +85,7 @@ var postDataListController = /*#__PURE__*/function () {
           case 4:
             dataList = _context2.sent;
 
-            if (!(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://content.v.daum.net/"))) {
+            if (!(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://v.daum.net/"))) {
               _context2.next = 7;
               break;
             }
@@ -148,7 +150,7 @@ var postDataListController = /*#__PURE__*/function () {
             return _AccountUrl["default"].insertMany({
               createTime: Date.now(),
               url: crawlUrl,
-              accountId: crawlUrl.split("/")[3],
+              accountId: crawlUrl.split("/")[4],
               accountName: accountName,
               platform: "kakao",
               owner: req.session.user._id
@@ -215,29 +217,111 @@ exports.postDataListController = postDataListController;
 
 var dataDetailController = /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-    var id;
+    var id, accounturl, postUrls, details, i, detail;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            try {
-              // 배열을 2중 배열로 넘겨야 할 듯
-              // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
-              id = req.query.id;
-              console.log(id);
-              res.render("detail_data", {
-                title: "detail"
-              });
-            } catch (e) {
-              console.log(e);
+            _context3.prev = 0;
+            // 배열을 2중 배열로 넘겨야 할 듯
+            // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
+            // 이거 데이터 뿌려주기 위한 데이터 구조를 다시 한 번 보는게 좋을 듯..
+            id = req.params.id;
+            console.log(id);
+            _context3.next = 5;
+            return _AccountUrl["default"].findById(id);
+
+          case 5:
+            accounturl = _context3.sent;
+            postUrls = [{
+              postTitle: "aaa",
+              img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
+              uploadTime: "2022-10-11",
+              index: [0, 1, 2, 3, 4, 5, 6],
+              views: [0, 1, 2, 3, 4, 5, 6],
+              likes: [0, 1, 2, 3, 4, 5, 6]
+            }, {
+              postTitle: "bbb",
+              img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
+              uploadTime: "2022-10-10",
+              index: [0, 1, 2, 3, 4, 5, 6],
+              views: [0, 1, 2, 3, 4, 5, 6],
+              likes: [0, 1, 2, 3, 4, 5, 6]
+            }, {
+              postTitle: "ccc",
+              img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
+              uploadTime: "2022-10-09",
+              index: [0, 1, 2, 3, 4, 5, 6],
+              views: [0, 1, 2, 3, 4, 5, 6],
+              likes: [0, 1, 2, 3, 4, 5, 6]
+            }];
+
+            if (!(id === "63704211cfa4b03494152789")) {
+              _context3.next = 9;
+              break;
             }
 
-          case 1:
+            return _context3.abrupt("return", res.render("detail_data", {
+              title: "detail",
+              postUrls: postUrls,
+              details: []
+            }));
+
+          case 9:
+            _context3.next = 11;
+            return _CrawlUrlPost["default"].find({
+              url: accounturl.url
+            }).sort({
+              uploadTime: -1
+            }).lean();
+
+          case 11:
+            postUrls = _context3.sent;
+            console.log(postUrls);
+            details = [];
+            i = 0;
+
+          case 15:
+            if (!(i < postUrls.length)) {
+              _context3.next = 23;
+              break;
+            }
+
+            _context3.next = 18;
+            return _PostDetail["default"].find({
+              postUrl: postUrls[i]._id
+            });
+
+          case 18:
+            detail = _context3.sent;
+            details.push(detail);
+
+          case 20:
+            i++;
+            _context3.next = 15;
+            break;
+
+          case 23:
+            console.log(details);
+            res.render("detail_data", {
+              title: "detail",
+              postUrls: postUrls,
+              details: details
+            });
+            _context3.next = 30;
+            break;
+
+          case 27:
+            _context3.prev = 27;
+            _context3.t0 = _context3["catch"](0);
+            console.log(_context3.t0);
+
+          case 30:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3);
+    }, _callee3, null, [[0, 27]]);
   }));
 
   return function dataDetailController(_x5, _x6) {

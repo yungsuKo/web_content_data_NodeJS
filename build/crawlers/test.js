@@ -8,109 +8,332 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+require("dotenv/config");
+
+require('../db');
+
 var axios = require("axios");
 
 var cheerio = require("cheerio");
 
 var puppeteer = require("puppeteer");
 
-var PostData = require("../models/Naver_post"); // 출처: https://hbesthee.tistory.com/1737 [채윤이네집:티스토리]
+var AccountUrl = require("../models/AccountUrl");
+
+var CrawlUrlPost = require("../models/CrawlUrlPost");
+
+var PostDetail = require("../models/PostDetail"); // 가장 최근의 것만 확인한 후 제외하는 현상있음.
 
 
-function crawler_naverPost() {
-  return _crawler_naverPost.apply(this, arguments);
+function delay(time) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
 }
 
-function _crawler_naverPost() {
-  _crawler_naverPost = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var delay, timestamp, browser, page, content, $, raw_views, views, recommend, like, impress;
+function timestamp() {
+  var today = new Date();
+  today.setHours(today.getHours() + 9);
+  return today.toISOString();
+} // 계정 url을 조회했을 때, DB에 저장되지 않은 게시물 url이 있으면 크롤링하여 저장함
+
+
+function schedulePostCrawler(_x) {
+  return _schedulePostCrawler.apply(this, arguments);
+}
+
+function _schedulePostCrawler() {
+  _schedulePostCrawler = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(accountUrl) {
+    var crawlUrlList, browser, page, content, $, $postLists, list, i, exist, _$postLists, urlList, _list, _i, _content, _$, elements, raw_uploadTime, fixed_uploadTime, uploadTime, views, raw_views, _i2, _exist;
+
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            timestamp = function _timestamp() {
-              var today = new Date();
-              today.setHours(today.getHours() + 9);
-              return today.toISOString();
-            };
-
-            delay = function _delay(time) {
-              return new Promise(function (resolve) {
-                setTimeout(resolve, time);
-              });
-            };
-
-            _context.next = 4;
+            _context.next = 2;
             return puppeteer.launch({
               headless: false
             });
 
-          case 4:
+          case 2:
             browser = _context.sent;
-            _context.prev = 5;
-            _context.next = 8;
+            _context.prev = 3;
+            _context.next = 6;
             return browser.newPage();
 
-          case 8:
+          case 6:
             page = _context.sent;
-            _context.next = 11;
+            _context.next = 9;
             return page.setViewport({
               width: 1366,
               height: 768
             });
 
-          case 11:
-            _context.next = 13;
-            return page["goto"]("https://v.daum.net/v/126RBzVs6j");
+          case 9:
+            // "https://www.goodchoice.kr/product/search/2" URL에 접속한다. (여기어때 호텔 페이지)
+            console.log(accountUrl);
+            _context.next = 12;
+            return page["goto"](accountUrl.url);
 
-          case 13:
+          case 12:
             console.log("waiting for loading");
-            _context.next = 16;
+            _context.next = 15;
             return delay(1000);
 
-          case 16:
+          case 15:
             console.log("loading end"); // 페이지의 HTML을 가져온다.
 
-            _context.next = 19;
+            _context.next = 18;
             return page.content();
 
-          case 19:
+          case 18:
             content = _context.sent;
             $ = cheerio.load(content);
-            raw_views = $('span.txt_info:nth-child(1)').text();
-            views = String(Number(raw_views.split(' ')[1].replace('만', '')) * 10000);
-            recommend = $('[data-action-type="RECOMMEND"] span.🎬_count_label').text();
-            like = $('[data-action-type="LIKE"] span.🎬_count_label').text();
-            impress = $('[data-action-type="IMPRESS"] span.🎬_count_label').text(); // const comments = $('span.u_cbox_count').text();
 
-            console.log(views);
-            console.log(recommend);
-            console.log(like);
-            console.log(impress); // const lists = $("#lst_feed > #inner_feed_box");
+            if (!(accountUrl.platform == "naver")) {
+              _context.next = 45;
+              break;
+            }
 
-            return _context.abrupt("return", console.log("crawling finished!"));
+            $postLists = $("div.inner_feed_box");
+            list = [];
+            $postLists.each(function (i, elem) {
+              var raw_uploadTime = $(this).find("time.date_post").text().replace("\n", "").trim();
+              var uploadTime = "";
 
-          case 33:
-            _context.prev = 33;
-            _context.t0 = _context["catch"](5);
-            console.log(_context.t0);
+              if (raw_uploadTime.includes("시간")) {
+                var timeOver = Number(raw_uploadTime.replace("시간 전", ""));
+                var timeNow = new Date(timestamp());
+                uploadTime = timeNow.setHours(timeNow.getHours() - timeOver);
+              } else {
+                uploadTime = new Date(raw_uploadTime);
+                uploadTime.setHours(uploadTime.getHours() + 9);
+                uploadTime.toISOString();
+              }
 
-          case 36:
-            _context.prev = 36;
-            _context.next = 39;
-            return browser.close();
+              list[i] = new CrawlUrlPost({
+                createTime: timestamp(),
+                uploadTime: uploadTime,
+                postUrl: $(this).find("a.link_end").attr("href"),
+                img: $(this).find("a.link_end img").attr("src"),
+                url: url[0].url,
+                title: $(this).find("strong.tit_feed").text().replace("\n", "")
+              });
+            });
+            console.log(list); // list 내에 있는 url을 for 문으로 한 번씩 돌림
 
-          case 39:
-            return _context.finish(36);
+            i = 0;
+
+          case 26:
+            if (!(i < list.length)) {
+              _context.next = 34;
+              break;
+            }
+
+            _context.next = 29;
+            return CrawlUrlPost.exists({
+              postUrl: list[i].postUrl
+            });
+
+          case 29:
+            exist = _context.sent;
+
+            if (exist) {
+              list.splice(i, 1);
+            }
+
+          case 31:
+            i++;
+            _context.next = 26;
+            break;
+
+          case 34:
+            _context.prev = 34;
+            _context.next = 37;
+            return CrawlUrlPost.insertMany(list);
+
+          case 37:
+            crawlUrlList = _context.sent;
+            _context.next = 43;
+            break;
 
           case 40:
+            _context.prev = 40;
+            _context.t0 = _context["catch"](34);
+            console.log(_context.t0);
+
+          case 43:
+            _context.next = 95;
+            break;
+
+          case 45:
+            _$postLists = $("a.link_column");
+            urlList = []; // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
+
+            _$postLists.each(function (i, elem) {
+              urlList[i] = $(this).attr("href");
+            });
+
+            console.log(urlList);
+            _list = [];
+            _i = 0;
+
+          case 51:
+            if (!(_i < 10)) {
+              _context.next = 76;
+              break;
+            }
+
+            _context.next = 54;
+            return page["goto"]("https:".concat(urlList[_i]));
+
+          case 54:
+            console.log("https:".concat(urlList[_i]));
+            _context.next = 57;
+            return page.content();
+
+          case 57:
+            _content = _context.sent;
+            _$ = cheerio.load(_content);
+            elements = _$(".box_line");
+            _context.next = 62;
+            return delay(300);
+
+          case 62:
+            _context.next = 64;
+            return elements.find(".info_view .txt_info .num_date").text().replace(elements.find("#article_head_view_count").text(), "");
+
+          case 64:
+            raw_uploadTime = _context.sent;
+            fixed_uploadTime = new Date(raw_uploadTime);
+            fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
+            uploadTime = fixed_uploadTime.toISOString(); // 데이터 가공 - views
+
+            views = null;
+            raw_views = elements.find("#article_head_view_count").text();
+
+            if (raw_views.includes("만")) {
+              // raw_views에서 "만" 문자열 제외 -> 데이터 타입 숫자로 변경 -> 곱하기 10,000
+              views = Number(raw_views.replace("만", "")) * 10000;
+            } else {
+              // raw_views의 데이터 타입을 숫자로 변경
+              views = Number(raw_views.replace(",", ""));
+            }
+
+            _list[_i] = new CrawlUrlPost({
+              createTime: timestamp(),
+              uploadTime: uploadTime,
+              img: elements.find("img.thumb_g_article").attr("src"),
+              postUrl: urlList[_i],
+              url: accountUrl.url,
+              title: elements.find(".tit_view").text().replace("\n", "")
+            });
+            console.log(_list[_i]);
+
+          case 73:
+            _i++;
+            _context.next = 51;
+            break;
+
+          case 76:
+            _i2 = 0;
+
+          case 77:
+            if (!(_i2 < _list.length)) {
+              _context.next = 85;
+              break;
+            }
+
+            _context.next = 80;
+            return CrawlUrlPost.exists({
+              postUrl: _list[_i2].postUrl
+            });
+
+          case 80:
+            _exist = _context.sent;
+
+            if (_exist) {
+              _list.splice(_i2, 1);
+            }
+
+          case 82:
+            _i2++;
+            _context.next = 77;
+            break;
+
+          case 85:
+            console.log(_list);
+            _context.prev = 86;
+            _context.next = 89;
+            return CrawlUrlPost.insertMany(_list);
+
+          case 89:
+            crawlUrlList = _context.sent;
+            _context.next = 95;
+            break;
+
+          case 92:
+            _context.prev = 92;
+            _context.t1 = _context["catch"](86);
+            console.log(_context.t1);
+
+          case 95:
+            _context.next = 100;
+            break;
+
+          case 97:
+            _context.prev = 97;
+            _context.t2 = _context["catch"](3);
+            console.log(_context.t2);
+
+          case 100:
+            _context.prev = 100;
+            _context.next = 103;
+            return browser.close();
+
+          case 103:
+            return _context.finish(100);
+
+          case 104:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[5, 33, 36, 40]]);
+    }, _callee, null, [[3, 97, 100, 104], [34, 40], [86, 92]]);
   }));
-  return _crawler_naverPost.apply(this, arguments);
+  return _schedulePostCrawler.apply(this, arguments);
 }
 
-crawler_naverPost();
+function urlPicker() {
+  return _urlPicker.apply(this, arguments);
+}
+
+function _urlPicker() {
+  _urlPicker = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    var url;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return AccountUrl.findOne({
+              accountId: "2124"
+            });
+
+          case 2:
+            url = _context2.sent;
+            return _context2.abrupt("return", url);
+
+          case 4:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _urlPicker.apply(this, arguments);
+}
+
+urlPicker().then(function (resolvedData) {
+  schedulePostCrawler(resolvedData);
+});
