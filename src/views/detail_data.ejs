@@ -27,19 +27,19 @@
 										<img src="<%= postUrls[i].img %>"/>
 									</div>
 									<div class="post-item__desc">
-										<div class="post-item__desc-title"><%= postUrls[i].postTitle %></div>
+										<div class="post-item__desc-title"><%= postUrls[i].title %></div>
 										<div class="post-item__desc-upload"><%= postUrls[i].uploadTime %></div>
 									</div>
 								</th>
 								<!-- 열안에 th에서는 행을 대표하는 게시물의 정보가 들어가 있어야함 -->
-								<% for(let j =0; j<postUrls[i].index.length; j++){%>
+								<% for(let j =0; j<postUrls[i].postDetails.length; j++){%>
 									<td>
 										<div class="post-item__data">
 											<div class="post-item__data-views">
-												<%= postUrls[i].views[j] %>
+												<%= postUrls[i].postDetails[j].views %>
 											</div>
 											<div class="post-item__data-likes">
-												<%= postUrls[i].likes[j] %>
+												<%= postUrls[i].postDetails[j].likes %>
 											</div>
 										</div>
 									</td>

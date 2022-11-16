@@ -120,23 +120,34 @@ export const dataDetailController = async (req, res) => {
         if(id === "63704211cfa4b03494152789"){
             return res.render("detail_data", {
                 title: "detail",
-                postUrls,
-                details : []
+                postUrls
             });
         }
-        postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7).populate("");
-
-        console.log("postUrls : ",postUrls);
-        const details = [];
-        // for(let i=0; i<postUrls.length; i++){
-        //     let detail = await PostDetail.find({postUrl:postUrls[i]._id});
-        //     details.push(detail);
-        // }
-        console.log(details);
+        postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7).populate("postDetails");
+        let result = postUrls.map(post => {
+            let dateDiff = post.postDetails.map(detail => {
+                return Math.ceil((detail.createTime.getTime() - post.uploadTime.getTime())/(1000 * 60 * 60 * 24));
+            });
+            let postViews = post.postDetails.map(detail => {
+                return detail.views
+            });
+            let postLikes = post.postDetails.map(detail => {
+                return detail.likes
+            });
+            let postComments = post.postDetails.map(detail => {
+                return detail.comments
+            });
+            return {
+                dateDiff,
+                views: postViews,
+                likes : postLikes,
+                comments : postComments
+            }
+        });
+        console.log("result : ",result);
         res.render("detail_data", {
             title: "detail",
-            postUrls,
-            details
+            postUrls
         });
     } catch (e) {
         console.log(e);

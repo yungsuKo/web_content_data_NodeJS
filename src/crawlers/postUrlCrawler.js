@@ -22,7 +22,8 @@ function delay(time) {
 
 module.exports = async function postUrlCrawl1(url){
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
       });
     try {
         // 새로운 페이지를 연다.

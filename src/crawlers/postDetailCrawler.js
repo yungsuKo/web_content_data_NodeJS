@@ -20,7 +20,8 @@ function delay(time) {
 
 module.exports = async function postDetail1(postEachUrl, accountUrl){
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     try {
         let detailData = {};
