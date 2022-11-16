@@ -7,10 +7,14 @@ var crawlPostDataSchema = new mongoose.Schema({
   uploadTime: Date,
   img: String,
   postUrl: String,
+  postDetails: [{
+    type: mongoose.Types.ObjectId,
+    ref: "PostDetail"
+  }],
   url: {
     type: String,
     required: true,
-    ref: "CrawlData"
+    ref: "AccountUrl"
   },
   title: String
 });

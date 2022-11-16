@@ -85,7 +85,7 @@ var postDataListController = /*#__PURE__*/function () {
           case 4:
             dataList = _context2.sent;
 
-            if (!(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://v.daum.net/"))) {
+            if (!(!crawlUrl.includes("https://post.naver.com/") && !crawlUrl.includes("https://content.v.daum.net/"))) {
               _context2.next = 7;
               break;
             }
@@ -217,7 +217,7 @@ exports.postDataListController = postDataListController;
 
 var dataDetailController = /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-    var id, accounturl, postUrls, details, i, detail;
+    var id, accounturl, postUrls, details;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -273,55 +273,36 @@ var dataDetailController = /*#__PURE__*/function () {
               url: accounturl.url
             }).sort({
               uploadTime: -1
-            }).lean();
+            }).lean().limit(7).populate("");
 
           case 11:
             postUrls = _context3.sent;
-            console.log(postUrls);
-            details = [];
-            i = 0;
+            console.log("postUrls : ", postUrls);
+            details = []; // for(let i=0; i<postUrls.length; i++){
+            //     let detail = await PostDetail.find({postUrl:postUrls[i]._id});
+            //     details.push(detail);
+            // }
 
-          case 15:
-            if (!(i < postUrls.length)) {
-              _context3.next = 23;
-              break;
-            }
-
-            _context3.next = 18;
-            return _PostDetail["default"].find({
-              postUrl: postUrls[i]._id
-            });
-
-          case 18:
-            detail = _context3.sent;
-            details.push(detail);
-
-          case 20:
-            i++;
-            _context3.next = 15;
-            break;
-
-          case 23:
             console.log(details);
             res.render("detail_data", {
               title: "detail",
               postUrls: postUrls,
               details: details
             });
-            _context3.next = 30;
+            _context3.next = 21;
             break;
 
-          case 27:
-            _context3.prev = 27;
+          case 18:
+            _context3.prev = 18;
             _context3.t0 = _context3["catch"](0);
             console.log(_context3.t0);
 
-          case 30:
+          case 21:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[0, 27]]);
+    }, _callee3, null, [[0, 18]]);
   }));
 
   return function dataDetailController(_x5, _x6) {

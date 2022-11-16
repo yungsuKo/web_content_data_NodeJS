@@ -8,7 +8,9 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-require("../db");
+require("dotenv/config");
+
+require('../db');
 
 var axios = require("axios");
 
@@ -16,16 +18,12 @@ var cheerio = require("cheerio");
 
 var puppeteer = require("puppeteer");
 
+var AccountUrl = require("../models/AccountUrl");
+
 var CrawlUrlPost = require("../models/CrawlUrlPost");
 
-var PostDetail = require("../models/PostDetail"); // 게시글 url에서 수집해야하는 데이터
+var PostDetail = require("../models/PostDetail"); // 가장 최근의 것만 확인한 후 제외하는 현상있음.
 
-
-function timestamp() {
-  var today = new Date();
-  today.setHours(today.getHours() + 9);
-  return today.toISOString();
-}
 
 function delay(time) {
   return new Promise(function (resolve) {
@@ -33,9 +31,20 @@ function delay(time) {
   });
 }
 
-module.exports = /*#__PURE__*/function () {
-  var _postDetail = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(postEachUrl, accountUrl) {
-    var browser, detailData, postData, page, createTime, content, $, raw_views, views, likes, comments, _raw_views, _views, recommend, like, impress, _likes, detailDataSaved;
+function timestamp() {
+  var today = new Date();
+  today.setHours(today.getHours() + 9);
+  return today.toISOString();
+} // 계정 url을 조회했을 때, DB에 저장되지 않은 게시물 url이 있으면 크롤링하여 저장함
+
+
+function schedulePostCrawler(_x) {
+  return _schedulePostCrawler.apply(this, arguments);
+}
+
+function _schedulePostCrawler() {
+  _schedulePostCrawler = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(accountUrl) {
+    var crawlUrlList, browser, page, content, $, $postLists, urlList, elem, newPostUrl, postExist, list, i, _content, _$, elements, raw_uploadTime, fixed_uploadTime, uploadTime, views, raw_views;
 
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
@@ -49,129 +58,207 @@ module.exports = /*#__PURE__*/function () {
           case 2:
             browser = _context.sent;
             _context.prev = 3;
-            detailData = {};
-            _context.next = 7;
-            return CrawlUrlPost.findById(postEachUrl._id);
-
-          case 7:
-            postData = _context.sent;
-            _context.next = 10;
+            _context.next = 6;
             return browser.newPage();
 
-          case 10:
+          case 6:
             page = _context.sent;
-            createTime = timestamp(); // 페이지의 크기를 설정한다.
-
-            _context.next = 14;
+            _context.next = 9;
             return page.setViewport({
               width: 1366,
               height: 768
             });
 
-          case 14:
-            if (!(accountUrl.platform == "naver")) {
-              _context.next = 30;
+          case 9:
+            // URL에 접속한다.
+            console.log(accountUrl);
+            _context.next = 12;
+            return page["goto"](accountUrl.url);
+
+          case 12:
+            console.log("waiting for loading");
+            _context.next = 15;
+            return delay(1000);
+
+          case 15:
+            console.log("loading end"); // 페이지의 HTML을 가져온다.
+
+            _context.next = 18;
+            return page.content();
+
+          case 18:
+            content = _context.sent;
+            $ = cheerio.load(content);
+            $postLists = $("a.link_column"); // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
+
+            urlList = [];
+            /**  jquery의 .each 는 비동기 처리를 함. 
+            // each 문을 벗어나지 못하는 현상이 있어서 for - in 구문을 사용함
+            // $postLists.each(async function (i, elem) {    
+            //     let newPostUrl = elem.attribs.href;
+            //     const postExist = await CrawlUrlPost.exists({ postUrl : newPostUrl });
+            //     if (!postExist) {
+            //         urlList[i] = newPostUrl;
+            //     }
+                });
+            */
+
+            _context.t0 = _regeneratorRuntime().keys($postLists);
+
+          case 23:
+            if ((_context.t1 = _context.t0()).done) {
+              _context.next = 34;
               break;
             }
 
-            _context.next = 17;
-            return page["goto"](postEachUrl.postUrl);
+            elem = _context.t1.value;
 
-          case 17:
-            _context.next = 19;
-            return delay(10);
+            if ($postLists[elem].attribs) {
+              _context.next = 27;
+              break;
+            }
 
-          case 19:
-            _context.next = 21;
-            return page.content();
+            return _context.abrupt("break", 34);
 
-          case 21:
-            content = _context.sent;
-            $ = cheerio.load(content);
-            raw_views = $('span.se_view').text();
-            views = raw_views.replace("읽음", "");
-            likes = $('a#btn_like_end em.u_cnt._cnt').text();
-            comments = $('span.u_cbox_count').text();
-            detailData = {
-              createTime: createTime,
-              views: views,
-              likes: likes,
-              comments: comments,
-              postUrl: postEachUrl._id
-            };
-            _context.next = 46;
-            break;
+          case 27:
+            newPostUrl = $postLists[elem].attribs.href;
+            _context.next = 30;
+            return CrawlUrlPost.exists({
+              postUrl: newPostUrl
+            });
 
           case 30:
-            console.log("https:" + postEachUrl.postUrl);
-            _context.next = 33;
-            return page["goto"]("https:" + postEachUrl.postUrl);
+            postExist = _context.sent;
 
-          case 33:
-            _context.next = 35;
-            return delay(10);
+            if (!postExist) {
+              urlList.push(newPostUrl);
+            }
 
-          case 35:
-            _context.next = 37;
-            return page.content();
-
-          case 37:
-            content = _context.sent;
-            $ = cheerio.load(content);
-            _raw_views = $('span.txt_info:nth-child(1)').text();
-            _views = String(Number(_raw_views.split(' ')[1].replace('만', '')) * 10000);
-            recommend = Number($('[data-action-type="RECOMMEND"] span.🎬_count_label').text());
-            like = Number($('[data-action-type="LIKE"] span.🎬_count_label').text());
-            impress = Number($('[data-action-type="IMPRESS"] span.🎬_count_label').text());
-            _likes = recommend + like + impress;
-            detailData = {
-              createTime: createTime,
-              views: _views,
-              likes: _likes,
-              comments: "",
-              postUrl: postEachUrl._id
-            };
-
-          case 46:
-            _context.next = 48;
-            return PostDetail.insertMany(detailData);
-
-          case 48:
-            detailDataSaved = _context.sent;
-            console.log(detailDataSaved);
-            postData.postDetails.push(detailDataSaved[0]._id);
-            _context.next = 53;
-            return postData.save();
-
-          case 53:
-            console.log(postData);
-            _context.next = 59;
+            _context.next = 23;
             break;
 
-          case 56:
-            _context.prev = 56;
-            _context.t0 = _context["catch"](3);
-            console.log(_context.t0);
+          case 34:
+            list = [];
+            i = 0;
 
-          case 59:
-            _context.prev = 59;
-            _context.next = 62;
-            return browser.close();
+          case 36:
+            if (!(i < urlList.length)) {
+              _context.next = 63;
+              break;
+            }
 
-          case 62:
-            return _context.finish(59);
+            console.log("이게 먼저 나오니..?");
+            _context.next = 40;
+            return page["goto"]("https:".concat(urlList[i]));
+
+          case 40:
+            console.log("https:".concat(urlList[i]));
+            _context.next = 43;
+            return page.content();
+
+          case 43:
+            _content = _context.sent;
+            _$ = cheerio.load(_content);
+            elements = _$(".box_line");
+            _context.next = 48;
+            return delay(300);
+
+          case 48:
+            _context.next = 50;
+            return elements.find(".info_view .txt_info .num_date").text().replace(elements.find("#article_head_view_count").text(), "");
+
+          case 50:
+            raw_uploadTime = _context.sent;
+            _context.next = 53;
+            return new Date(raw_uploadTime);
+
+          case 53:
+            fixed_uploadTime = _context.sent;
+            fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
+            uploadTime = fixed_uploadTime.toISOString(); // 데이터 가공 - views
+
+            views = null;
+            raw_views = elements.find("#article_head_view_count").text();
+
+            if (raw_views.includes("만")) {
+              // raw_views에서 "만" 문자열 제외 -> 데이터 타입 숫자로 변경 -> 곱하기 10,000
+              views = Number(raw_views.replace("만", "")) * 10000;
+            } else {
+              // raw_views의 데이터 타입을 숫자로 변경
+              views = Number(raw_views.replace(",", ""));
+            }
+
+            list[i] = new CrawlUrlPost({
+              createTime: timestamp(),
+              uploadTime: uploadTime,
+              img: elements.find("img.thumb_g_article").attr("src"),
+              postUrl: urlList[i],
+              url: accountUrl.url,
+              title: elements.find(".tit_view").text().replace("\n", "")
+            });
+
+          case 60:
+            i++;
+            _context.next = 36;
+            break;
 
           case 63:
+            _context.next = 68;
+            break;
+
+          case 65:
+            _context.prev = 65;
+            _context.t2 = _context["catch"](3);
+            console.log(_context.t2);
+
+          case 68:
+            _context.prev = 68;
+            _context.next = 71;
+            return browser.close();
+
+          case 71:
+            return _context.finish(68);
+
+          case 72:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[3, 56, 59, 63]]);
+    }, _callee, null, [[3, 65, 68, 72]]);
   }));
+  return _schedulePostCrawler.apply(this, arguments);
+}
 
-  function postDetail1(_x, _x2) {
-    return _postDetail.apply(this, arguments);
-  }
+function urlPicker() {
+  return _urlPicker.apply(this, arguments);
+}
 
-  return postDetail1;
-}();
+function _urlPicker() {
+  _urlPicker = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+    var url;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return AccountUrl.findOne({
+              accountId: "2124"
+            });
+
+          case 2:
+            url = _context2.sent;
+            return _context2.abrupt("return", url);
+
+          case 4:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _urlPicker.apply(this, arguments);
+}
+
+urlPicker().then(function (resolvedData) {
+  schedulePostCrawler(resolvedData);
+});

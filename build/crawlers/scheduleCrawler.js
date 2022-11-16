@@ -47,46 +47,48 @@ module.exports = /*#__PURE__*/function () {
           case 0:
             _context.next = 2;
             return puppeteer.launch({
-              headless: false
+              headless: true,
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
 
           case 2:
             browser = _context.sent;
-            _context.prev = 3;
-            _context.next = 6;
+            console.log(accountUrl);
+            _context.prev = 4;
+            _context.next = 7;
             return browser.newPage();
 
-          case 6:
+          case 7:
             page = _context.sent;
-            _context.next = 9;
+            _context.next = 10;
             return page.setViewport({
               width: 1366,
               height: 768
             });
 
-          case 9:
+          case 10:
             // "https://www.goodchoice.kr/product/search/2" URL에 접속한다. (여기어때 호텔 페이지)
             console.log(accountUrl);
-            _context.next = 12;
+            _context.next = 13;
             return page["goto"](accountUrl.url);
 
-          case 12:
+          case 13:
             console.log("waiting for loading");
-            _context.next = 15;
+            _context.next = 16;
             return delay(1000);
 
-          case 15:
+          case 16:
             console.log("loading end"); // 페이지의 HTML을 가져온다.
 
-            _context.next = 18;
+            _context.next = 19;
             return page.content();
 
-          case 18:
+          case 19:
             content = _context.sent;
             $ = cheerio.load(content);
 
             if (!(accountUrl.platform == "naver")) {
-              _context.next = 45;
+              _context.next = 46;
               break;
             }
 
@@ -119,49 +121,49 @@ module.exports = /*#__PURE__*/function () {
 
             i = 0;
 
-          case 26:
+          case 27:
             if (!(i < list.length)) {
-              _context.next = 34;
+              _context.next = 35;
               break;
             }
 
-            _context.next = 29;
+            _context.next = 30;
             return CrawlUrlPost.exists({
               postUrl: list[i].postUrl
             });
 
-          case 29:
+          case 30:
             exist = _context.sent;
 
             if (exist) {
               list.splice(i, 1);
             }
 
-          case 31:
+          case 32:
             i++;
-            _context.next = 26;
+            _context.next = 27;
             break;
 
-          case 34:
-            _context.prev = 34;
-            _context.next = 37;
+          case 35:
+            _context.prev = 35;
+            _context.next = 38;
             return CrawlUrlPost.insertMany(list);
 
-          case 37:
+          case 38:
             crawlUrlList = _context.sent;
-            _context.next = 43;
+            _context.next = 44;
             break;
 
-          case 40:
-            _context.prev = 40;
-            _context.t0 = _context["catch"](34);
+          case 41:
+            _context.prev = 41;
+            _context.t0 = _context["catch"](35);
             console.log(_context.t0);
 
-          case 43:
-            _context.next = 91;
+          case 44:
+            _context.next = 92;
             break;
 
-          case 45:
+          case 46:
             _$postLists = $("a.link_column"); // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
 
             urlList = [];
@@ -178,63 +180,63 @@ module.exports = /*#__PURE__*/function () {
 
             _context.t1 = _regeneratorRuntime().keys(_$postLists);
 
-          case 48:
+          case 49:
             if ((_context.t2 = _context.t1()).done) {
-              _context.next = 59;
+              _context.next = 60;
               break;
             }
 
             elem = _context.t2.value;
 
             if (_$postLists[elem].attribs) {
-              _context.next = 52;
+              _context.next = 53;
               break;
             }
 
-            return _context.abrupt("break", 59);
+            return _context.abrupt("break", 60);
 
-          case 52:
+          case 53:
             newPostUrl = _$postLists[elem].attribs.href;
-            _context.next = 55;
+            _context.next = 56;
             return CrawlUrlPost.exists({
               postUrl: newPostUrl
             });
 
-          case 55:
+          case 56:
             postExist = _context.sent;
 
             if (!postExist) {
               urlList.push(newPostUrl);
             }
 
-            _context.next = 48;
+            _context.next = 49;
             break;
 
-          case 59:
+          case 60:
             _list = [];
             _i = 0;
 
-          case 61:
+          case 62:
             if (!(_i < urlList.length)) {
-              _context.next = 82;
+              _context.next = 83;
               break;
             }
 
-            _context.next = 64;
+            _context.next = 65;
             return page["goto"]("https:".concat(urlList[_i]));
 
-          case 64:
-            _context.next = 66;
+          case 65:
+            _context.next = 67;
             return page.content();
 
-          case 66:
+          case 67:
             _content = _context.sent;
             _$ = cheerio.load(_content);
             elements = _$(".box_line");
-            _context.next = 71;
+            _context.next = 72;
             return delay(300);
 
-          case 71:
+          case 72:
             // 데이터 가공 - uploadTime
             raw_uploadTime = elements.find(".info_view .txt_info .num_date").text().replace(elements.find("#article_head_view_count").text(), "");
             fixed_uploadTime = new Date(raw_uploadTime);
@@ -261,49 +263,49 @@ module.exports = /*#__PURE__*/function () {
               title: elements.find(".tit_view").text().replace("\n", "")
             });
 
-          case 79:
+          case 80:
             _i++;
-            _context.next = 61;
+            _context.next = 62;
             break;
 
-          case 82:
-            _context.prev = 82;
-            _context.next = 85;
+          case 83:
+            _context.prev = 83;
+            _context.next = 86;
             return CrawlUrlPost.insertMany(_list);
 
-          case 85:
+          case 86:
             crawlUrlList = _context.sent;
-            _context.next = 91;
+            _context.next = 92;
             break;
 
-          case 88:
-            _context.prev = 88;
-            _context.t3 = _context["catch"](82);
+          case 89:
+            _context.prev = 89;
+            _context.t3 = _context["catch"](83);
             console.log(_context.t3);
 
-          case 91:
-            _context.next = 96;
+          case 92:
+            _context.next = 97;
             break;
 
-          case 93:
-            _context.prev = 93;
-            _context.t4 = _context["catch"](3);
+          case 94:
+            _context.prev = 94;
+            _context.t4 = _context["catch"](4);
             console.log(_context.t4);
 
-          case 96:
-            _context.prev = 96;
-            _context.next = 99;
+          case 97:
+            _context.prev = 97;
+            _context.next = 100;
             return browser.close();
 
-          case 99:
-            return _context.finish(96);
-
           case 100:
+            return _context.finish(97);
+
+          case 101:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[3, 93, 96, 100], [34, 40], [82, 88]]);
+    }, _callee, null, [[4, 94, 97, 101], [35, 41], [83, 89]]);
   }));
 
   function schedulePostCrawler(_x) {
@@ -316,7 +318,7 @@ module.exports = /*#__PURE__*/function () {
 
 module.exports = /*#__PURE__*/function () {
   var _scheduleDetailCrawler = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(postEachUrl, accountUrl) {
-    var browser, detailData, page, createTime, content, $, raw_views, views, likes, comments, _raw_views, _views, recommend, like, impress, _likes;
+    var browser, detailData, postData, page, createTime, content, $, raw_views, views, likes, comments, _raw_views, _views, recommend, like, impress, _likes, detailDataSaved;
 
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
@@ -324,45 +326,52 @@ module.exports = /*#__PURE__*/function () {
           case 0:
             _context2.next = 2;
             return puppeteer.launch({
-              headless: false
+              headless: true,
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
 
           case 2:
             browser = _context2.sent;
             _context2.prev = 3;
-            detailData = {}; // 새로운 페이지를 연다.
-
+            detailData = {};
             _context2.next = 7;
-            return browser.newPage();
+            return CrawlUrlPost.findById(postEachUrl._id);
 
           case 7:
+            postData = _context2.sent;
+            _context2.next = 10;
+            return browser.newPage();
+
+          case 10:
             page = _context2.sent;
             createTime = timestamp(); // 페이지의 크기를 설정한다.
 
-            _context2.next = 11;
+            _context2.next = 14;
             return page.setViewport({
               width: 1366,
               height: 768
             });
 
-          case 11:
+          case 14:
+            console.log(accountUrl);
+
             if (!(accountUrl.platform == "naver")) {
-              _context2.next = 27;
+              _context2.next = 31;
               break;
             }
 
-            _context2.next = 14;
+            _context2.next = 18;
             return page["goto"](postEachUrl.postUrl);
 
-          case 14:
-            _context2.next = 16;
+          case 18:
+            _context2.next = 20;
             return delay(10);
 
-          case 16:
-            _context2.next = 18;
+          case 20:
+            _context2.next = 22;
             return page.content();
 
-          case 18:
+          case 22:
             content = _context2.sent;
             $ = cheerio.load(content);
             raw_views = $('span.se_view').text();
@@ -376,23 +385,22 @@ module.exports = /*#__PURE__*/function () {
               comments: comments,
               postUrl: postEachUrl._id
             };
-            _context2.next = 43;
+            _context2.next = 46;
             break;
 
-          case 27:
-            console.log("https:" + postEachUrl.postUrl);
-            _context2.next = 30;
+          case 31:
+            _context2.next = 33;
             return page["goto"]("https:" + postEachUrl.postUrl);
 
-          case 30:
-            _context2.next = 32;
+          case 33:
+            _context2.next = 35;
             return delay(10);
 
-          case 32:
-            _context2.next = 34;
+          case 35:
+            _context2.next = 37;
             return page.content();
 
-          case 34:
+          case 37:
             content = _context2.sent;
             $ = cheerio.load(content);
             _raw_views = $('span.txt_info:nth-child(1)').text();
@@ -409,33 +417,40 @@ module.exports = /*#__PURE__*/function () {
               postUrl: postEachUrl._id
             };
 
-          case 43:
-            _context2.next = 45;
+          case 46:
+            _context2.next = 48;
             return PostDetail.insertMany(detailData);
 
-          case 45:
-            _context2.next = 50;
+          case 48:
+            detailDataSaved = _context2.sent;
+            console.log(detailDataSaved);
+            postData.postDetails.push(detailDataSaved[0]._id);
+            _context2.next = 53;
+            return postData.save();
+
+          case 53:
+            _context2.next = 58;
             break;
 
-          case 47:
-            _context2.prev = 47;
+          case 55:
+            _context2.prev = 55;
             _context2.t0 = _context2["catch"](3);
             console.log(_context2.t0);
 
-          case 50:
-            _context2.prev = 50;
-            _context2.next = 53;
+          case 58:
+            _context2.prev = 58;
+            _context2.next = 61;
             return browser.close();
 
-          case 53:
-            return _context2.finish(50);
+          case 61:
+            return _context2.finish(58);
 
-          case 54:
+          case 62:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[3, 47, 50, 54]]);
+    }, _callee2, null, [[3, 55, 58, 62]]);
   }));
 
   function scheduleDetailCrawler(_x2, _x3) {
