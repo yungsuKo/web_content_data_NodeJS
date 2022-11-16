@@ -22,7 +22,8 @@ function timestamp() {
 module.exports = async function schedulePostCrawler(accountUrl){
     let crawlUrlList;
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     console.log(accountUrl);
     try {
@@ -166,7 +167,8 @@ module.exports = async function scheduleDetailCrawler(postEachUrl, accountUrl){
     // 7일 이내 업로드 된 postUrl을 입력받고,
     // 해당 url에 접근하여 detail 정보를 받아옴.
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     try {
         let detailData = {};
