@@ -124,8 +124,9 @@ export const dataDetailController = async (req, res) => {
             });
         }
         postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7).populate("postDetails");
-        let result = postUrls.map(post => {
+        let semiResult = postUrls.map(post => {
             let dateDiff = post.postDetails.map(detail => {
+                // ceil은 천장 - 무조건 올림을 의미함 
                 return Math.ceil((detail.createTime.getTime() - post.uploadTime.getTime())/(1000 * 60 * 60 * 24));
             });
             let postViews = post.postDetails.map(detail => {
@@ -144,7 +145,13 @@ export const dataDetailController = async (req, res) => {
                 comments : postComments
             }
         });
-        console.log("result : ",result);
+        console.log("semiResult : ",semiResult);
+        let result = [];
+        for(let i; i<7; i+=1){
+            if(semiResult.dateDiff.indexOf(i,0)>0){
+                resultObject
+            }
+        }
         res.render("detail_data", {
             title: "detail",
             postUrls
