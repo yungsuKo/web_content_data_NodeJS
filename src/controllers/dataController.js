@@ -91,40 +91,9 @@ export const dataDetailController = async (req, res) => {
         const {id} = req.params;
         console.log(id);
         const accounturl = await AccountUrl.findById(id);
-        let postUrls = [
-            {
-                postTitle : "aaa",
-                img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
-                uploadTime : "2022-10-11",
-                index : [0,1,2,3,4,5,6],
-                views : [0,1,2,3,4,5,6],
-                likes : [0,1,2,3,4,5,6]
-            },
-            {
-                postTitle : "bbb",
-                img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
-                uploadTime : "2022-10-10",
-                index : [0,1,2,3,4,5,6],
-                views : [0,1,2,3,4,5,6],
-                likes : [0,1,2,3,4,5,6]
-            },
-            {
-                postTitle : "ccc",
-                img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
-                uploadTime : "2022-10-09",
-                index : [0,1,2,3,4,5,6],
-                views : [0,1,2,3,4,5,6],
-                likes : [0,1,2,3,4,5,6]
-            }
-        ];
-        if(id === "63704211cfa4b03494152789"){
-            return res.render("detail_data", {
-                title: "detail",
-                postUrls
-            });
-        }
+        let postUrls = [];
         postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7).populate("postDetails");
-        let semiResult = postUrls.map(post => {
+        let semiResults = postUrls.map(post => {
             let dateDiff = post.postDetails.map(detail => {
                 // ceil은 천장 - 무조건 올림을 의미함 
                 return Math.ceil((detail.createTime.getTime() - post.uploadTime.getTime())/(1000 * 60 * 60 * 24));
@@ -140,22 +109,56 @@ export const dataDetailController = async (req, res) => {
             });
             return {
                 dateDiff,
+                title: post.title,
+                uploadTime: post.uploadTime,
                 views: postViews,
                 likes : postLikes,
                 comments : postComments
             }
         });
-        console.log("semiResult : ",semiResult);
-        let result = [];
-        for(let i; i<7; i+=1){
-            if(semiResult.dateDiff.indexOf(i,0)>0){
-                resultObject
+        console.log("semiResults : ",semiResults);
+        async function getResultObject(arrItem){
+            let resultObject = {
+                dateDiff:[],
+                views:[],
+                likes:[],
+                comments:[]
+            };
+            const list = [1,2,3,4,5,6,7];
+            for(const i of list){
+                console.log(i);
+                let index = arrItem.dateDiff.lastIndexOf(i,0);
+                if(index > -1){
+                    resultObject.dateDiff[i-1] = arrItem.dateDiff[index];
+                    resultObject.views[i-1] = arrItem.views[index];
+                    resultObject.likes[i-1] = arrItem.likes[index];
+                    resultObject.comments[i-1] = arrItem.comments[index];
+                }else{
+                    resultObject.dateDiff[i-1] = null;
+                    resultObject.views[i-1] =  null;
+                    resultObject.likes[i-1] = null;
+                    resultObject.comments[i-1] = null;
+                }
             }
+            return resultObject;
+        };
+        const result = [];
+        for(let i = 0;i < semiResults.length;i++){
+            let semiResult = semiResults[i];
+            let data = await getResultObject(semiResult);
+            result.push(data);
         }
+        // semiResults.map(async (semiResult) => {
+        //     console.log(semiResult);
+        //     return await getResultObject(semiResult);
+        // })
+        
+        console.log("result",result);
         res.render("detail_data", {
             title: "detail",
             postUrls
         });
+        
     } catch (e) {
         console.log(e);
     }
