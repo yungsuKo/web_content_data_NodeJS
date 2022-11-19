@@ -14,10 +14,18 @@ main{
         margin-top: 30px;
         table{
             width: 100%;
+            thead{
+                th{
+                    border: 1px solid black;
+                }
+            }
             tbody{
                 tr{
+                    border: 1px solid black;
                     th{
                         display: flex;
+                        max-width : 400px;
+                        justify-content: space-around;
                         .post-item__img{
                             img{
                                 width: 80px;
@@ -33,7 +41,9 @@ main{
                         }
                     }
                     td{
-                        vertical-align:inherit ;
+                        width : 7%;
+                        border: 1px solid black;
+                        vertical-align:middle;
                         .post-item__data{
                             display: flex;
                             height: 100%;

@@ -70,7 +70,7 @@ export const postDataListController = async (req, res) => {
         // postUrlCrawl1 : 신규 계정이 최초 입력되었을 때, 크롤링해야하는 글 목록이 크롤링됨
         const urlList = await postUrlCrawl1(url)
         for(let i=0; i<urlList.length; i++){
-            await postDetail1(urlList[i], url);
+            await postDetail1(urlList[i], url[0]);
         }
         dataList = await AccountUrl.find({})
         return res.render("list_data", {
@@ -110,6 +110,8 @@ export const dataDetailController = async (req, res) => {
             return {
                 dateDiff,
                 title: post.title,
+                img : post.img,
+                url : post.postUrl,
                 uploadTime: post.uploadTime,
                 views: postViews,
                 likes : postLikes,
@@ -119,6 +121,10 @@ export const dataDetailController = async (req, res) => {
         console.log("semiResults : ",semiResults);
         async function getResultObject(arrItem){
             let resultObject = {
+                title: String,
+                img : String,
+                uploadTime: Date,
+                url : String,
                 dateDiff:[],
                 views:[],
                 likes:[],
@@ -128,6 +134,10 @@ export const dataDetailController = async (req, res) => {
             for(const i of list){
                 console.log(i);
                 let index = arrItem.dateDiff.lastIndexOf(i,0);
+                resultObject.title = arrItem.title;
+                resultObject.img = arrItem.img;
+                resultObject.uploadTime = arrItem.uploadTime;
+                resultObject.url = accounturl.platform=="naver"?"https://post.naver.com/"+arrItem.url:"https:"+arrItem.url;
                 if(index > -1){
                     resultObject.dateDiff[i-1] = arrItem.dateDiff[index];
                     resultObject.views[i-1] = arrItem.views[index];
@@ -156,7 +166,7 @@ export const dataDetailController = async (req, res) => {
         console.log("result",result);
         res.render("detail_data", {
             title: "detail",
-            postUrls
+            result
         });
         
     } catch (e) {

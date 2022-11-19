@@ -19,27 +19,29 @@
 						<% } %>
 					</thead>
 					<tbody>
-						<% for(let i =0; i<postUrls.length; i++){%>
+						<% for(let i =0; i<result.length; i++){%>
 							<!-- tr에는 하나의 게시물에 대한 정보가 들어가 있어야함 -->
 							<tr>
 								<th>
-									<div class="post-item__img">
-										<img src="<%= postUrls[i].img %>"/>
-									</div>
-									<div class="post-item__desc">
-										<div class="post-item__desc-title"><%= postUrls[i].title %></div>
-										<div class="post-item__desc-upload"><%= postUrls[i].uploadTime %></div>
-									</div>
+									<a href="<%= result[i].url %>">
+										<div class="post-item__img">
+											<img src="<%= result[i].img %>"/>
+										</div>
+										<div class="post-item__desc">
+											<div class="post-item__desc-title"><%= result[i].title.slice(0,28)+"..." %></div>
+											<div class="post-item__desc-upload"><%= result[i].uploadTime.toISOString().replace("T"," ").slice(0,16) %></div>
+										</div>
+									</a>
 								</th>
 								<!-- 열안에 th에서는 행을 대표하는 게시물의 정보가 들어가 있어야함 -->
-								<% for(let j =0; j<postUrls[i].postDetails.length; j++){%>
+								<% for(let j =0; j<result[i].dateDiff.length; j++){%>
 									<td>
 										<div class="post-item__data">
 											<div class="post-item__data-views">
-												<%= postUrls[i].postDetails[j].views %>
+												<%= result[i].views[j] %>
 											</div>
 											<div class="post-item__data-likes">
-												<%= postUrls[i].postDetails[j].likes %>
+												<%= result[i].likes[j] %>
 											</div>
 										</div>
 									</td>

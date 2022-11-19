@@ -35,11 +35,13 @@ module.exports = async function postDetail1(postEachUrl, accountUrl){
             height: 768,
         });
 
+        // https://post.naver.com/viewer/postView.naver?volumeNo=34755830&memberNo=202156
+        // https://post.naver.com/viewer/postView.naver?volumeNo=34179077&memberNo=37255411
         let content;
         let $;
         if(accountUrl.platform == "naver"){
-            await page.goto(postEachUrl.postUrl);
-            await delay(10);
+            await page.goto("https://post.naver.com/"+postEachUrl.postUrl);
+            await delay(500);
             content = await page.content();
             $ = cheerio.load(content);
             const raw_views = $('span.se_view').text();
