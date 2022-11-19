@@ -204,19 +204,25 @@ main {
         border: 1px solid black; }
       main .container-post_datas table tbody tr {
         border: 1px solid black; }
-        main .container-post_datas table tbody tr th {
+        main .container-post_datas table tbody tr a {
+          text-decoration: none;
+          color: black;
           display: flex;
           max-width: 400px;
-          justify-content: space-around; }
-          main .container-post_datas table tbody tr th .post-item__img img {
-            width: 80px;
-            height: 50px;
-            object-fit: cover; }
-          main .container-post_datas table tbody tr th .post-item__desc {
+          padding: 3px; }
+          main .container-post_datas table tbody tr a .post-item__img {
+            width: 80px; }
+            main .container-post_datas table tbody tr a .post-item__img img {
+              width: 80px;
+              height: 50px;
+              object-fit: cover; }
+          main .container-post_datas table tbody tr a .post-item__desc {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center; }
+            justify-content: center;
+            margin-left: 10px; }
+            main .container-post_datas table tbody tr a .post-item__desc div {
+              text-align: left; }
         main .container-post_datas table tbody tr td {
           width: 7%;
           border: 1px solid black;

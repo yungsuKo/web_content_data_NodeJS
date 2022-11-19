@@ -4,13 +4,13 @@ import app from "./server";
 import AccountUrl from "./models/AccountUrl";
 import CrawlUrlPost from "./models/CrawlUrlPost";
 import PostDetail from "./models/PostDetail";
-import schedulePostCrawler from "./crawlers/scheduleCrawler";
-import scheduleDetailCrawler from "./crawlers/scheduleCrawler";
+import schedulePostCrawler from "./crawlers/schedulePostCrawler";
+import scheduleDetailCrawler from "./crawlers/scheduleDetailCrawler";
 
 const schedule = require("node-schedule");
 const { now } = require("mongoose");
 
-var job = schedule.scheduleJob("00 00 00 * * *", async function () {
+var job = schedule.scheduleJob("50 16 * * * *", async function () {
     let mNow = new Date();
     mNow.setDate(mNow.getDate()-7);
     // mNow는 시작일로부터 7일 이전의 값을 의미함. 
@@ -21,12 +21,13 @@ var job = schedule.scheduleJob("00 00 00 * * *", async function () {
         // 포스트 db에서 계정 url을 기준으로 뽑음
         console.log(accountUrls[i]);
         await schedulePostCrawler(accountUrls[i]);
+
         const postUrls = await CrawlUrlPost.find({
             uploadTime:{$gt : mNow},
+            url : accountUrls[i].url
         });
         for (let j=0; j<postUrls.length; j++){ 
-            console.log(accountUrls[i]);
-            await scheduleDetailCrawler(postUrls[j], accountUrls[i]);
+            await scheduleDetailCrawler(postUrls[j], accountUrls[i].platform);
         }
     }
 });

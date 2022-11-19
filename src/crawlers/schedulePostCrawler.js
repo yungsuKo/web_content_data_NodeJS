@@ -7,8 +7,6 @@ const AccountUrl = require("../models/AccountUrl");
 const CrawlUrlPost = require("../models/CrawlUrlPost");
 const PostDetail = require("../models/PostDetail");
 
-// 가장 최근의 것만 확인한 후 제외하는 현상있음.
-
 function delay(time) {
     return new Promise(function (resolve) {
         setTimeout(resolve, time);
@@ -21,7 +19,7 @@ function timestamp() {
 }
 
 // 계정 url을 조회했을 때, DB에 저장되지 않은 게시물 url이 있으면 크롤링하여 저장함
-async function schedulePostCrawler(argsurl){
+module.exports = async function schedulePostCrawler(argsurl){
     const browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -148,13 +146,3 @@ async function schedulePostCrawler(argsurl){
         await browser.close();
     }
 }
-async function urlPicker() {
-  const url = await AccountUrl.findOne({accountId:"2124"});
-  return url;
-}
-
-urlPicker().then(function(resolvedData){
-    console.log(resolvedData);
-    schedulePostCrawler(resolvedData);
-  }
-);
