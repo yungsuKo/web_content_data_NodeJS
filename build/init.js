@@ -31,7 +31,7 @@ var schedule = require("node-schedule");
 var _require = require("mongoose"),
     now = _require.now;
 
-var job = schedule.scheduleJob("00 00 13 * * *", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+var job = schedule.scheduleJob("00 02 13 * * *", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
   var mNow, accountUrls, i, postUrls, j;
   return _regeneratorRuntime().wrap(function _callee$(_context) {
     while (1) {
