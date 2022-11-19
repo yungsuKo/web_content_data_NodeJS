@@ -14,7 +14,9 @@ var _CrawlUrlPost = _interopRequireDefault(require("./models/CrawlUrlPost"));
 
 var _PostDetail = _interopRequireDefault(require("./models/PostDetail"));
 
-var _scheduleCrawler = _interopRequireDefault(require("./crawlers/scheduleCrawler"));
+var _schedulePostCrawler = _interopRequireDefault(require("./crawlers/schedulePostCrawler"));
+
+var _scheduleDetailCrawler = _interopRequireDefault(require("./crawlers/scheduleDetailCrawler"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -29,7 +31,7 @@ var schedule = require("node-schedule");
 var _require = require("mongoose"),
     now = _require.now;
 
-var job = schedule.scheduleJob("00 * * * * *", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+var job = schedule.scheduleJob("50 16 * * * *", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
   var mNow, accountUrls, i, postUrls, j;
   return _regeneratorRuntime().wrap(function _callee$(_context) {
     while (1) {
@@ -48,7 +50,7 @@ var job = schedule.scheduleJob("00 * * * * *", /*#__PURE__*/_asyncToGenerator( /
 
         case 7:
           if (!(i < accountUrls.length)) {
-            _context.next = 25;
+            _context.next = 24;
             break;
           }
 
@@ -56,14 +58,15 @@ var job = schedule.scheduleJob("00 * * * * *", /*#__PURE__*/_asyncToGenerator( /
           // 포스트 db에서 계정 url을 기준으로 뽑음
           console.log(accountUrls[i]);
           _context.next = 11;
-          return (0, _scheduleCrawler["default"])(accountUrls[i]);
+          return (0, _schedulePostCrawler["default"])(accountUrls[i]);
 
         case 11:
           _context.next = 13;
           return _CrawlUrlPost["default"].find({
             uploadTime: {
               $gt: mNow
-            }
+            },
+            url: accountUrls[i].url
           });
 
         case 13:
@@ -72,25 +75,24 @@ var job = schedule.scheduleJob("00 * * * * *", /*#__PURE__*/_asyncToGenerator( /
 
         case 15:
           if (!(j < postUrls.length)) {
-            _context.next = 22;
+            _context.next = 21;
             break;
           }
 
-          console.log(accountUrls[i]);
-          _context.next = 19;
-          return (0, _scheduleCrawler["default"])(postUrls[j], accountUrls[i]);
+          _context.next = 18;
+          return (0, _scheduleDetailCrawler["default"])(postUrls[j], accountUrls[i].platform);
 
-        case 19:
+        case 18:
           j++;
           _context.next = 15;
           break;
 
-        case 22:
+        case 21:
           i++;
           _context.next = 7;
           break;
 
-        case 25:
+        case 24:
         case "end":
           return _context.stop();
       }

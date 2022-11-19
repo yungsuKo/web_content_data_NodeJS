@@ -8,7 +8,9 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-require("../db");
+require("dotenv/config");
+
+require('../db');
 
 var axios = require("axios");
 
@@ -16,17 +18,11 @@ var cheerio = require("cheerio");
 
 var puppeteer = require("puppeteer");
 
-var CrawlPostData = require("../models/CrawlUrlPost");
+var AccountUrl = require("../models/AccountUrl");
+
+var CrawlUrlPost = require("../models/CrawlUrlPost");
 
 var PostDetail = require("../models/PostDetail");
-
-var crawlUrlList = []; // 게시글 url에서 수집해야하는 데이터
-
-function timestamp() {
-  var today = new Date();
-  today.setHours(today.getHours() + 9);
-  return today.toISOString();
-}
 
 function delay(time) {
   return new Promise(function (resolve) {
@@ -34,9 +30,16 @@ function delay(time) {
   });
 }
 
+function timestamp() {
+  var today = new Date();
+  today.setHours(today.getHours() + 9);
+  return today.toISOString();
+} // 계정 url을 조회했을 때, DB에 저장되지 않은 게시물 url이 있으면 크롤링하여 저장함
+
+
 module.exports = /*#__PURE__*/function () {
-  var _postUrlCrawl = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(url) {
-    var browser, page, content, $, $postLists, list, _$postLists, urlList, _list, i, _content, _$, elements, raw_uploadTime, fixed_uploadTime, uploadTime, views, raw_views;
+  var _schedulePostCrawler = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(argsurl) {
+    var browser, page, content, $, crawlUrlList, $postLists, list, i, exist, _$postLists, urlList, elem, newPostUrl, postExist, _list, _i, _content, _$, elements, raw_uploadTime, fixed_uploadTime, uploadTime, views, raw_views;
 
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
@@ -64,25 +67,23 @@ module.exports = /*#__PURE__*/function () {
 
           case 9:
             _context.next = 11;
-            return page["goto"]("".concat(url[0].url));
+            return page["goto"](argsurl.url);
 
           case 11:
-            console.log("waiting for loading");
+            console.log(argsurl.url);
             _context.next = 14;
             return delay(1000);
 
           case 14:
-            console.log("loading end"); // 페이지의 HTML을 가져온다.
-
-            _context.next = 17;
+            _context.next = 16;
             return page.content();
 
-          case 17:
+          case 16:
             content = _context.sent;
             $ = cheerio.load(content);
 
-            if (!(url[0].platform == "naver")) {
-              _context.next = 35;
+            if (!(argsurl.platform == "naver")) {
+              _context.next = 43;
               break;
             }
 
@@ -102,73 +103,132 @@ module.exports = /*#__PURE__*/function () {
                 uploadTime.toISOString();
               }
 
-              list[i] = new CrawlPostData({
+              list[i] = new CrawlUrlPost({
                 createTime: timestamp(),
                 uploadTime: uploadTime,
                 postUrl: $(this).find("a.link_end").attr("href"),
                 img: $(this).find("a.link_end img").attr("src"),
-                url: url[0].url,
+                url: argsurl.url,
                 title: $(this).find("strong.tit_feed").text().replace("\n", "")
               });
             });
-            console.log(list); // 리스트에 저장되어있는 post url들의 detail을 하나씩 뽑음
+            console.log(list); // list 내에 있는 url을 for 문으로 한 번씩 돌림
 
-            _context.prev = 24;
-            _context.next = 27;
-            return CrawlPostData.insertMany(list);
-
-          case 27:
-            crawlUrlList = _context.sent;
-            _context.next = 33;
-            break;
-
-          case 30:
-            _context.prev = 30;
-            _context.t0 = _context["catch"](24);
-            console.log(_context.t0);
-
-          case 33:
-            _context.next = 74;
-            break;
-
-          case 35:
-            _$postLists = $("a.link_column");
-            urlList = [];
-
-            _$postLists.each(function (i, elem) {
-              urlList[i] = $(this).attr("href");
-            });
-
-            _list = [];
             i = 0;
 
-          case 40:
-            if (!(i < 20)) {
-              _context.next = 65;
+          case 24:
+            if (!(i < list.length)) {
+              _context.next = 32;
               break;
             }
 
-            _context.next = 43;
-            return page["goto"]("https:".concat(urlList[i]));
+            _context.next = 27;
+            return CrawlUrlPost.exists({
+              postUrl: list[i].postUrl
+            });
+
+          case 27:
+            exist = _context.sent;
+
+            if (exist) {
+              list.splice(i, 1);
+            }
+
+          case 29:
+            i++;
+            _context.next = 24;
+            break;
+
+          case 32:
+            _context.prev = 32;
+            _context.next = 35;
+            return CrawlUrlPost.insertMany(list);
+
+          case 35:
+            crawlUrlList = _context.sent;
+            _context.next = 41;
+            break;
+
+          case 38:
+            _context.prev = 38;
+            _context.t0 = _context["catch"](32);
+            console.log(_context.t0);
+
+          case 41:
+            _context.next = 90;
+            break;
 
           case 43:
-            console.log("https:".concat(urlList[i]));
-            _context.next = 46;
-            return page.content();
+            _$postLists = $("a.link_column"); // 게시물 리스트 페이지에서 모든 게시물의 url을 리스트 형식으로 저장함.
+
+            urlList = [];
+            _context.t1 = _regeneratorRuntime().keys(_$postLists);
 
           case 46:
+            if ((_context.t2 = _context.t1()).done) {
+              _context.next = 57;
+              break;
+            }
+
+            elem = _context.t2.value;
+
+            if (_$postLists[elem].attribs) {
+              _context.next = 50;
+              break;
+            }
+
+            return _context.abrupt("break", 57);
+
+          case 50:
+            newPostUrl = _$postLists[elem].attribs.href;
+            _context.next = 53;
+            return CrawlUrlPost.exists({
+              postUrl: newPostUrl
+            });
+
+          case 53:
+            postExist = _context.sent;
+
+            if (!postExist) {
+              urlList.push(newPostUrl);
+            }
+
+            _context.next = 46;
+            break;
+
+          case 57:
+            _list = [];
+
+            if (!(urlList.length > 0)) {
+              _context.next = 81;
+              break;
+            }
+
+            _i = 0;
+
+          case 60:
+            if (!(_i < urlList.length)) {
+              _context.next = 81;
+              break;
+            }
+
+            _context.next = 63;
+            return page["goto"]("https:".concat(urlList[_i]));
+
+          case 63:
+            _context.next = 65;
+            return page.content();
+
+          case 65:
             _content = _context.sent;
             _$ = cheerio.load(_content);
             elements = _$(".box_line");
-            _context.next = 51;
+            _context.next = 70;
             return delay(300);
 
-          case 51:
-            _context.next = 53;
-            return elements.find(".info_view .txt_info .num_date").text().replace(elements.find("#article_head_view_count").text(), "");
-
-          case 53:
-            raw_uploadTime = _context.sent;
+          case 70:
+            // 데이터 가공 - uploadTime
+            raw_uploadTime = elements.find(".info_view .txt_info .num_date").text().replace(elements.find("#article_head_view_count").text(), "");
             fixed_uploadTime = new Date(raw_uploadTime);
             fixed_uploadTime.setHours(fixed_uploadTime.getHours() + 9);
             uploadTime = fixed_uploadTime.toISOString(); // 데이터 가공 - views
@@ -184,63 +244,62 @@ module.exports = /*#__PURE__*/function () {
               views = Number(raw_views.replace(",", ""));
             }
 
-            _list[i] = new CrawlPostData({
+            _list[_i] = new CrawlUrlPost({
               createTime: timestamp(),
               uploadTime: uploadTime,
               img: elements.find("img.thumb_g_article").attr("src"),
-              postUrl: urlList[i],
-              url: url[0].url,
+              postUrl: urlList[_i],
+              url: argsurl.url,
               title: elements.find(".tit_view").text().replace("\n", "")
             });
-            console.log(_list[i]);
 
-          case 62:
-            i++;
-            _context.next = 40;
+          case 78:
+            _i++;
+            _context.next = 60;
             break;
 
-          case 65:
-            _context.prev = 65;
-            _context.next = 68;
-            return CrawlPostData.insertMany(_list);
-
-          case 68:
-            crawlUrlList = _context.sent;
-            _context.next = 74;
-            break;
-
-          case 71:
-            _context.prev = 71;
-            _context.t1 = _context["catch"](65);
-            console.log(_context.t1);
-
-          case 74:
-            return _context.abrupt("return", crawlUrlList);
-
-          case 77:
-            _context.prev = 77;
-            _context.t2 = _context["catch"](3);
-            console.log(_context.t2);
-
-          case 80:
-            _context.prev = 80;
-            _context.next = 83;
-            return browser.close();
-
-          case 83:
-            return _context.finish(80);
+          case 81:
+            _context.prev = 81;
+            _context.next = 84;
+            return CrawlUrlPost.insertMany(_list);
 
           case 84:
+            crawlUrlList = _context.sent;
+            _context.next = 90;
+            break;
+
+          case 87:
+            _context.prev = 87;
+            _context.t3 = _context["catch"](81);
+            console.log(_context.t3);
+
+          case 90:
+            return _context.abrupt("return", "success!!");
+
+          case 93:
+            _context.prev = 93;
+            _context.t4 = _context["catch"](3);
+            console.log(_context.t4);
+
+          case 96:
+            _context.prev = 96;
+            _context.next = 99;
+            return browser.close();
+
+          case 99:
+            return _context.finish(96);
+
+          case 100:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[3, 77, 80, 84], [24, 30], [65, 71]]);
+    }, _callee, null, [[3, 93, 96, 100], [32, 38], [81, 87]]);
   }));
 
-  function postUrlCrawl1(_x) {
-    return _postUrlCrawl.apply(this, arguments);
+  function schedulePostCrawler(_x) {
+    return _schedulePostCrawler.apply(this, arguments);
   }
 
-  return postUrlCrawl1;
+  return schedulePostCrawler;
 }();

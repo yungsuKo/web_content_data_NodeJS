@@ -43,7 +43,8 @@ module.exports = /*#__PURE__*/function () {
           case 0:
             _context.next = 2;
             return puppeteer.launch({
-              headless: false
+              headless: true,
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
 
           case 2:
@@ -75,11 +76,11 @@ module.exports = /*#__PURE__*/function () {
             }
 
             _context.next = 17;
-            return page["goto"](postEachUrl.postUrl);
+            return page["goto"]("https://post.naver.com/" + postEachUrl.postUrl);
 
           case 17:
             _context.next = 19;
-            return delay(10);
+            return delay(500);
 
           case 19:
             _context.next = 21;

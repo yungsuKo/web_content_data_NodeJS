@@ -176,7 +176,7 @@ var postDataListController = /*#__PURE__*/function () {
             }
 
             _context2.next = 33;
-            return (0, _postDetailCrawler["default"])(urlList[i], url);
+            return (0, _postDetailCrawler["default"])(urlList[i], url[0]);
 
           case 33:
             i++;
@@ -216,93 +216,164 @@ var postDataListController = /*#__PURE__*/function () {
 exports.postDataListController = postDataListController;
 
 var dataDetailController = /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-    var id, accounturl, postUrls, details;
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(req, res) {
+    var getResultObject, id, accounturl, postUrls, semiResults, result, i, semiResult, data;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
-            _context3.prev = 0;
+            _context4.prev = 0;
+
+            getResultObject = /*#__PURE__*/function () {
+              var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(arrItem) {
+                var resultObject, list, _i, _list, i, index;
+
+                return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        resultObject = {
+                          title: String,
+                          img: String,
+                          uploadTime: Date,
+                          url: String,
+                          dateDiff: [],
+                          views: [],
+                          likes: [],
+                          comments: []
+                        };
+                        list = [1, 2, 3, 4, 5, 6, 7];
+
+                        for (_i = 0, _list = list; _i < _list.length; _i++) {
+                          i = _list[_i];
+                          console.log(i);
+                          index = arrItem.dateDiff.lastIndexOf(i, 0);
+                          resultObject.title = arrItem.title;
+                          resultObject.img = arrItem.img;
+                          resultObject.uploadTime = arrItem.uploadTime;
+                          resultObject.url = accounturl.platform == "naver" ? "https://post.naver.com/" + arrItem.url : "https:" + arrItem.url;
+
+                          if (index > -1) {
+                            resultObject.dateDiff[i - 1] = arrItem.dateDiff[index];
+                            resultObject.views[i - 1] = arrItem.views[index];
+                            resultObject.likes[i - 1] = arrItem.likes[index];
+                            resultObject.comments[i - 1] = arrItem.comments[index];
+                          } else {
+                            resultObject.dateDiff[i - 1] = null;
+                            resultObject.views[i - 1] = null;
+                            resultObject.likes[i - 1] = null;
+                            resultObject.comments[i - 1] = null;
+                          }
+                        }
+
+                        return _context3.abrupt("return", resultObject);
+
+                      case 4:
+                      case "end":
+                        return _context3.stop();
+                    }
+                  }
+                }, _callee3);
+              }));
+
+              return function getResultObject(_x7) {
+                return _ref4.apply(this, arguments);
+              };
+            }();
+
             // 배열을 2중 배열로 넘겨야 할 듯
             // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
             // 이거 데이터 뿌려주기 위한 데이터 구조를 다시 한 번 보는게 좋을 듯..
             id = req.params.id;
             console.log(id);
-            _context3.next = 5;
+            _context4.next = 6;
             return _AccountUrl["default"].findById(id);
 
-          case 5:
-            accounturl = _context3.sent;
-            postUrls = [{
-              postTitle: "aaa",
-              img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
-              uploadTime: "2022-10-11",
-              index: [0, 1, 2, 3, 4, 5, 6],
-              views: [0, 1, 2, 3, 4, 5, 6],
-              likes: [0, 1, 2, 3, 4, 5, 6]
-            }, {
-              postTitle: "bbb",
-              img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
-              uploadTime: "2022-10-10",
-              index: [0, 1, 2, 3, 4, 5, 6],
-              views: [0, 1, 2, 3, 4, 5, 6],
-              likes: [0, 1, 2, 3, 4, 5, 6]
-            }, {
-              postTitle: "ccc",
-              img: "https://img4.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202211/11/ohouse/20221111122015199gmrd.png",
-              uploadTime: "2022-10-09",
-              index: [0, 1, 2, 3, 4, 5, 6],
-              views: [0, 1, 2, 3, 4, 5, 6],
-              likes: [0, 1, 2, 3, 4, 5, 6]
-            }];
-
-            if (!(id === "63704211cfa4b03494152789")) {
-              _context3.next = 9;
-              break;
-            }
-
-            return _context3.abrupt("return", res.render("detail_data", {
-              title: "detail",
-              postUrls: postUrls,
-              details: []
-            }));
-
-          case 9:
-            _context3.next = 11;
+          case 6:
+            accounturl = _context4.sent;
+            postUrls = [];
+            _context4.next = 10;
             return _CrawlUrlPost["default"].find({
               url: accounturl.url
             }).sort({
               uploadTime: -1
-            }).lean().limit(7).populate("");
+            }).lean().limit(7).populate("postDetails");
 
-          case 11:
-            postUrls = _context3.sent;
-            console.log("postUrls : ", postUrls);
-            details = []; // for(let i=0; i<postUrls.length; i++){
-            //     let detail = await PostDetail.find({postUrl:postUrls[i]._id});
-            //     details.push(detail);
-            // }
-
-            console.log(details);
-            res.render("detail_data", {
-              title: "detail",
-              postUrls: postUrls,
-              details: details
+          case 10:
+            postUrls = _context4.sent;
+            semiResults = postUrls.map(function (post) {
+              var dateDiff = post.postDetails.map(function (detail) {
+                // ceil은 천장 - 무조건 올림을 의미함 
+                return Math.ceil((detail.createTime.getTime() - post.uploadTime.getTime()) / (1000 * 60 * 60 * 24));
+              });
+              var postViews = post.postDetails.map(function (detail) {
+                return detail.views;
+              });
+              var postLikes = post.postDetails.map(function (detail) {
+                return detail.likes;
+              });
+              var postComments = post.postDetails.map(function (detail) {
+                return detail.comments;
+              });
+              return {
+                dateDiff: dateDiff,
+                title: post.title,
+                img: post.img,
+                url: post.postUrl,
+                uploadTime: post.uploadTime,
+                views: postViews,
+                likes: postLikes,
+                comments: postComments
+              };
             });
-            _context3.next = 21;
+            console.log("semiResults : ", semiResults);
+            ;
+            result = [];
+            i = 0;
+
+          case 16:
+            if (!(i < semiResults.length)) {
+              _context4.next = 25;
+              break;
+            }
+
+            semiResult = semiResults[i];
+            _context4.next = 20;
+            return getResultObject(semiResult);
+
+          case 20:
+            data = _context4.sent;
+            result.push(data);
+
+          case 22:
+            i++;
+            _context4.next = 16;
             break;
 
-          case 18:
-            _context3.prev = 18;
-            _context3.t0 = _context3["catch"](0);
-            console.log(_context3.t0);
+          case 25:
+            // semiResults.map(async (semiResult) => {
+            //     console.log(semiResult);
+            //     return await getResultObject(semiResult);
+            // })
+            console.log("result", result);
+            res.render("detail_data", {
+              title: "detail",
+              result: result
+            });
+            _context4.next = 32;
+            break;
 
-          case 21:
+          case 29:
+            _context4.prev = 29;
+            _context4.t0 = _context4["catch"](0);
+            console.log(_context4.t0);
+
+          case 32:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
       }
-    }, _callee3, null, [[0, 18]]);
+    }, _callee4, null, [[0, 29]]);
   }));
 
   return function dataDetailController(_x5, _x6) {
