@@ -8,8 +8,9 @@
 		<main>
 			<div class="option-filters">
 				<div class="option-filters__calendar">
-					<input type="date" data-role="calendarpicker"/>
-					<input type="date" data-role="calendarpicker"/>
+					<% var today = new Date(); %>
+					<input type="date" class="option-filters__calendar startDate" value="<%=new Date(today.setDate(today.getDate()-6)).toISOString().slice(0,10)%>"/>
+					<input type="date" class="option-filters__calendar endDate" value="<%=new Date().toISOString().slice(0,10)%>"/>
 				</div>
 			</div>
 			<div class="container-post_trend">
@@ -59,4 +60,20 @@
 			</div>
 		</main>
 	</body>
+	<script>
+		const datePickers = document.querySelectorAll('.option-filters__calendar');
+		$(".option-filters__calendar").click(function(){
+			console.log("1111");
+		});
+		// datePickers.forEach(function(datePicker){
+		// 	datePicker.addEventListener('input', function(e){
+		// 		console.log("click!");
+		// 		const startDate = document.querySelector('.option-filters__calendar.startDate').value;
+		// 		const endDate = document.querySelector('.option-filters__calendar.endDate').value;
+		// 		console.log(startDate, endDate);
+
+
+		// 	});
+		// });
+	</script>
 </html>
