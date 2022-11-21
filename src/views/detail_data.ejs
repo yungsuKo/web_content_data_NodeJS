@@ -62,9 +62,30 @@
 	</body>
 	<script>
 		const datePickers = document.querySelectorAll('.option-filters__calendar');
-		$(".option-filters__calendar").click(function(){
-			console.log("1111");
+		$(".option-filters__calendar").change(function(){
+			const startDate = document.querySelector(".option-filters__calendar.startDate").value;
+			const endDate = document.querySelector(".option-filters__calendar.endDate").value;
+
+			console.log(startDate, endDate);
 		});
+		const getDateData = async (start, end) => {
+			var data = {};
+			data.startDate = start;
+			data.endDate = end;
+			var jsonStr = JSON.stringify(data);
+			$.ajax({
+				type: "GET",
+				url : "",
+				data: jsonStr,
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+        		error: function() {
+          			console.log('통신실패!!');
+        		},
+        		success: function(data) {
+          			console.log("통신데이터 값 : " + data);
+        		}
+			})
+		}
 		// datePickers.forEach(function(datePicker){
 		// 	datePicker.addEventListener('input', function(e){
 		// 		console.log("click!");
