@@ -3,6 +3,7 @@ import express from "express";
 import { application } from "express";
 import rootRouter from "./routers/rootRouter";
 import dataRouter from "./routers/dataRouter";
+import apiRouter from "./routers/apiRouter";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
@@ -42,8 +43,9 @@ console.log(process.env.MONGODB_KEY);
 app.set("view engine", "ejs");
 app.set("views", process.cwd() + "/src/views");
 
+app.use("/assets", express.static("assets"));
 app.use("/", rootRouter);
 app.use("/data", dataRouter);
-app.use("/assets", express.static("assets"));
+app.use("/api", apiRouter);
 
 export default app;

@@ -65,23 +65,29 @@
 		$(".option-filters__calendar").change(function(){
 			const startDate = document.querySelector(".option-filters__calendar.startDate").value;
 			const endDate = document.querySelector(".option-filters__calendar.endDate").value;
-
+			getDateData(startDate, endDate);
 			console.log(startDate, endDate);
 		});
-		const getDateData = async (start, end) => {
+		const getDateData = async (startDate, endDate) => {
+			$(".container-post_datas").empty();
+			var baseUrl = document.location.origin;
 			var data = {};
-			data.startDate = start;
-			data.endDate = end;
+			var id = document.location.pathname.split('/')[3];
+			data.startDate = startDate;
+			data.endDate = endDate;
+			data.id = id;
 			var jsonStr = JSON.stringify(data);
+			console.log(jsonStr);
 			$.ajax({
 				type: "GET",
-				url : "",
-				data: jsonStr,
+				url : `${baseUrl}/api/date`,
+				data,
 				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
         		error: function() {
           			console.log('통신실패!!');
         		},
         		success: function(data) {
+					$(".container-post_datas")
           			console.log("통신데이터 값 : " + data);
         		}
 			})

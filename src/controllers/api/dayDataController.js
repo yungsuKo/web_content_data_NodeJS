@@ -3,16 +3,22 @@ import AccountUrl from "../../models/AccountUrl";
 import CrawlPostData from "../../models/CrawlUrlPost";
 import PostDetail from "../../models/PostDetail";
 
-export const apiDetailController = async (req, res) => {
+export const dayDataController = async (req, res) => {
     try {
         // 배열을 2중 배열로 넘겨야 할 듯
         // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
         // 이거 데이터 뿌려주기 위한 데이터 구조를 다시 한 번 보는게 좋을 듯..
-        const {id} = req.params;
-        console.log(id);
+        let {id, startDate, endDate} = req.query;
+        startDate = new Date(startDate).toISOString();
+        endDate = new Date(endDate).toISOString();
+        console.log(id, startDate, endDate);
         const accounturl = await AccountUrl.findById(id);
+        console.log(accounturl);
         let postUrls = [];
-        postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7).populate("postDetails");
+        postUrls = await CrawlPostData.find({$and :[{url:accounturl.url},{$gte:{uploadTime: startDate}},{$lte:{uploadTime: endDate}}]})
+            .sort({uploadTime:-1})
+            .lean()
+            .populate("postDetails");
         let semiResults = postUrls.map(post => {
             let dateDiff = post.postDetails.map(detail => {
                 // ceil은 천장 - 무조건 올림을 의미함 
@@ -84,10 +90,7 @@ export const apiDetailController = async (req, res) => {
         // })
         
         console.log("result",result);
-        res.render("detail_data", {
-            title: "detail",
-            result
-        });
+        return result;
         
     } catch (e) {
         console.log(e);
