@@ -101,7 +101,7 @@ export const dayDataController = async (req, res) => {
     //     return await getResultObject(semiResult);
     // })
 
-    console.log("result.length", result.length);
+    console.log("result.length", result);
     res.send(result);
   } catch (e) {
     console.log(e);

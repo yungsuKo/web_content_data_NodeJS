@@ -87,59 +87,49 @@
           			console.log('통신실패!!');
         		},
         		success: function(data) {
-					let result = JSON.parse(data);
-					var table = "<thead>"
+					console.log(data);
+					var table = "<table>" 
+								+"<thead>"
 								+"<th>content\day</th>"
 								+"<% for(let i =0; i<7; i++){%>"
 								+"<th><%= i %></th>"
 								+"<% } %>"
 								+"</thead>"
 								+"<tbody>"
+					for(let i=0; i<data.length; i++){
+						table += '<tr>'
+								+'<th>'
+								+`<a href=${data[i].url}>`
+								+'<div class="post-item__img">'
+								+`<img src=${data[i].img}/>`
+								+'</div>'
+								+'<div class="post-item__desc">'
+								+`<div class="post-item__desc-title">${data[i].title.slice(0,28)+"..."}</div>`
+								+`<div class="post-item__desc-upload">${data[i].uploadTime.replace("T"," ").slice(0,16)} </div>`
+								+'</div>'
+								+'</a>'
+								+'</th>'
+						for(let j =0; j<data[i].dateDiff.length; j++){
+							table += '<td>'
+									+'<div class="post-item__data">'
+									+'<div class="post-item__data-views">'
+									+`${data[i].views[j]}`
+									+'</div>'
+									+'<div class="post-item__data-likes">'
+									+`${data[i].likes[j]}`
+									+'</div>'
+									+'</div>'
+									+'</td>'
+						}
 					
+						table += '</tr>'
+								
+					}
+					table += '</tbody>'
+							+'</table>'
 					$(".container-post_datas").empty();
 					$(".container-post_datas").append(table)
-					// `
-					// 	<table>
-					// 		<thead>
-					// 			<th>content\day</th>
-					// 			<% for(let i =0; i<7; i++){%>
-					// 				<th><%= i %></th>
-					// 			<% } %>
-					// 		</thead>
-					// 		<tbody>
-					// 			<% for(let i =0; i<result.length; i++){%>
-					// 				<!-- tr에는 하나의 게시물에 대한 정보가 들어가 있어야함 -->
-					// 				<tr>
-					// 					<th>
-					// 						<a href="<%= result[i].url %>">
-					// 							<div class="post-item__img">
-					// 								<img src="<%= result[i].img %>"/>
-					// 							</div>
-					// 							<div class="post-item__desc">
-					// 								<div class="post-item__desc-title"><%= result[i].title.slice(0,28)+"..." %></div>
-					// 								<div class="post-item__desc-upload"><%= result[i].uploadTime.toISOString().replace("T"," ").slice(0,16) %></div>
-					// 							</div>
-					// 						</a>
-					// 					</th>
-					// 					<!-- 열안에 th에서는 행을 대표하는 게시물의 정보가 들어가 있어야함 -->
-					// 					<% for(let j =0; j<result[i].dateDiff.length; j++){%>
-					// 						<td>
-					// 							<div class="post-item__data">
-					// 								<div class="post-item__data-views">
-					// 									<%= result[i].views[j] %>
-					// 								</div>
-					// 								<div class="post-item__data-likes">
-					// 									<%= result[i].likes[j] %>
-					// 								</div>
-					// 							</div>
-					// 						</td>
-					// 					<% } %>
-					// 				</tr>
-					// 			<% } %>
-					// 		</tbody>
-					// 	</table>`);
-          			console.log("통신데이터 값 : " + result);
-					console.log([1,2,3,4]);
+					
         		}
 			})
 		}

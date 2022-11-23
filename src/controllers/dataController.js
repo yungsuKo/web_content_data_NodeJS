@@ -91,8 +91,8 @@ export const dataDetailController = async (req, res) => {
         const {id} = req.params;
         console.log(id);
         const accounturl = await AccountUrl.findById(id);
-        let postUrls = [];
-        postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(7).populate("postDetails");
+        let postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(50).populate("postDetails");
+        console.log(postUrls);
         let semiResults = postUrls.map(post => {
             let dateDiff = post.postDetails.map(detail => {
                 // ceil은 천장 - 무조건 올림을 의미함 
@@ -118,7 +118,7 @@ export const dataDetailController = async (req, res) => {
                 comments : postComments
             }
         });
-        console.log("semiResults : ",semiResults);
+        console.log(semiResults);
         async function getResultObject(arrItem){
             let resultObject = {
                 title: String,
@@ -132,8 +132,7 @@ export const dataDetailController = async (req, res) => {
             };
             const list = [1,2,3,4,5,6,7];
             for(const i of list){
-                console.log(i);
-                let index = arrItem.dateDiff.lastIndexOf(i,0);
+                let index = arrItem.dateDiff.lastIndexOf(i);
                 resultObject.title = arrItem.title;
                 resultObject.img = arrItem.img;
                 resultObject.uploadTime = arrItem.uploadTime;
@@ -162,8 +161,6 @@ export const dataDetailController = async (req, res) => {
         //     console.log(semiResult);
         //     return await getResultObject(semiResult);
         // })
-        
-        console.log("result",result);
         res.render("detail_data", {
             title: "detail",
             result
