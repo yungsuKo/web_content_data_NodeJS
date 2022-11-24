@@ -9,29 +9,24 @@ export const dayDataController = async (req, res) => {
     // 각 항목에 대한 기간별 데이터를 넘겨야 하기 때문
     // 이거 데이터 뿌려주기 위한 데이터 구조를 다시 한 번 보는게 좋을 듯..
     let { id, startDate, endDate } = req.query;
-    startDate = new Date(startDate).toISOString();
-    endDate = new Date(endDate).toISOString();
     console.log(id, startDate, endDate);
     const accounturl = await AccountUrl.findById(id);
-    console.log(accounturl);
     let postUrls = [];
     postUrls = await CrawlPostData.find({
       $and: [
         { url: accounturl.url },
-        { $gte: { uploadTime: startDate } },
-        { $lte: { uploadTime: endDate } },
+        { uploadTime: { $gte: startDate } },
+        { uploadTime: { $lte: endDate } },
       ],
     })
       .sort({ uploadTime: -1 })
       .lean()
       .populate("postDetails");
+    console.log(postUrls[0]);
     let semiResults = postUrls.map((post) => {
       let dateDiff = post.postDetails.map((detail) => {
         // ceil은 천장 - 무조건 올림을 의미함
-        return Math.ceil(
-          (detail.createTime.getTime() - post.uploadTime.getTime()) /
-            (1000 * 60 * 60 * 24)
-        );
+        return Math.ceil((detail.createTime.getTime() - post.uploadTime.getTime())/(1000 * 60 * 60 * 24));
       });
       let postViews = post.postDetails.map((detail) => {
         return detail.views;
@@ -53,7 +48,6 @@ export const dayDataController = async (req, res) => {
         comments: postComments,
       };
     });
-    console.log("semiResults : ", semiResults);
     async function getResultObject(arrItem) {
       let resultObject = {
         title: String,
@@ -67,15 +61,11 @@ export const dayDataController = async (req, res) => {
       };
       const list = [1, 2, 3, 4, 5, 6, 7];
       for (const i of list) {
-        console.log(i);
-        let index = arrItem.dateDiff.lastIndexOf(i, 0);
+        let index = arrItem.dateDiff.lastIndexOf(i);
         resultObject.title = arrItem.title;
         resultObject.img = arrItem.img;
         resultObject.uploadTime = arrItem.uploadTime;
-        resultObject.url =
-          accounturl.platform == "naver"
-            ? "https://post.naver.com/" + arrItem.url
-            : "https:" + arrItem.url;
+        resultObject.url = accounturl.platform == "naver"? "https://post.naver.com/" + arrItem.url: "https:" + arrItem.url;
         if (index > -1) {
           resultObject.dateDiff[i - 1] = arrItem.dateDiff[index];
           resultObject.views[i - 1] = arrItem.views[index];
@@ -96,12 +86,6 @@ export const dayDataController = async (req, res) => {
       let data = await getResultObject(semiResult);
       result.push(data);
     }
-    // semiResults.map(async (semiResult) => {
-    //     console.log(semiResult);
-    //     return await getResultObject(semiResult);
-    // })
-
-    console.log("result.length", result);
     res.send(result);
   } catch (e) {
     console.log(e);

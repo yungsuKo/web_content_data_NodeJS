@@ -91,8 +91,13 @@ export const dataDetailController = async (req, res) => {
         const {id} = req.params;
         console.log(id);
         const accounturl = await AccountUrl.findById(id);
-        let postUrls = await CrawlPostData.find({url:accounturl.url}).sort({uploadTime:-1}).lean().limit(50).populate("postDetails");
-        console.log(postUrls);
+        let postUrls = await CrawlPostData.find({
+            url:accounturl.url
+        })
+            .sort({uploadTime:-1})
+            .lean()
+            .limit(50)
+            .populate("postDetails");
         let semiResults = postUrls.map(post => {
             let dateDiff = post.postDetails.map(detail => {
                 // ceil은 천장 - 무조건 올림을 의미함 
@@ -118,7 +123,6 @@ export const dataDetailController = async (req, res) => {
                 comments : postComments
             }
         });
-        console.log(semiResults);
         async function getResultObject(arrItem){
             let resultObject = {
                 title: String,
@@ -157,10 +161,6 @@ export const dataDetailController = async (req, res) => {
             let data = await getResultObject(semiResult);
             result.push(data);
         }
-        // semiResults.map(async (semiResult) => {
-        //     console.log(semiResult);
-        //     return await getResultObject(semiResult);
-        // })
         res.render("detail_data", {
             title: "detail",
             result
