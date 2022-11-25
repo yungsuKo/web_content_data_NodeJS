@@ -7,17 +7,14 @@ exports["default"] = void 0;
 
 var _express = _interopRequireDefault(require("express"));
 
-var _dataController = require("../controllers/dataController");
-
 var _dayDataController = require("../controllers/api/dayDataController");
 
 var _middlewares = require("../middlewares");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var dataRouter = _express["default"].Router();
+var apiRouter = _express["default"].Router();
 
-dataRouter.route("/").all(_middlewares.protectorMiddleware).get(_dataController.getDataListController).post(_dataController.postDataListController);
-dataRouter.route("/detail/:id([0-9a-f]{24})").all(_middlewares.protectorMiddleware).get(_dataController.dataDetailController);
-var _default = dataRouter;
+apiRouter.route("/date").all(_middlewares.protectorMiddleware).get(_dayDataController.dayDataController);
+var _default = apiRouter;
 exports["default"] = _default;

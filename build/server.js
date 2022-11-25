@@ -13,6 +13,8 @@ var _rootRouter = _interopRequireDefault(require("./routers/rootRouter"));
 
 var _dataRouter = _interopRequireDefault(require("./routers/dataRouter"));
 
+var _apiRouter = _interopRequireDefault(require("./routers/apiRouter"));
+
 var _morgan = _interopRequireDefault(require("morgan"));
 
 var _cookieParser = _interopRequireDefault(require("cookie-parser"));
@@ -52,8 +54,9 @@ app.use(logger);
 console.log(process.env.MONGODB_KEY);
 app.set("view engine", "ejs");
 app.set("views", process.cwd() + "/src/views");
+app.use("/assets", _express["default"]["static"]("assets"));
 app.use("/", _rootRouter["default"]);
 app.use("/data", _dataRouter["default"]);
-app.use("/assets", _express["default"]["static"]("assets"));
+app.use("/api", _apiRouter["default"]);
 var _default = app;
 exports["default"] = _default;

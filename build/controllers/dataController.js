@@ -246,8 +246,7 @@ var dataDetailController = /*#__PURE__*/function () {
 
                         for (_i = 0, _list = list; _i < _list.length; _i++) {
                           i = _list[_i];
-                          console.log(i);
-                          index = arrItem.dateDiff.lastIndexOf(i, 0);
+                          index = arrItem.dateDiff.lastIndexOf(i);
                           resultObject.title = arrItem.title;
                           resultObject.img = arrItem.img;
                           resultObject.uploadTime = arrItem.uploadTime;
@@ -291,15 +290,14 @@ var dataDetailController = /*#__PURE__*/function () {
 
           case 6:
             accounturl = _context4.sent;
-            postUrls = [];
-            _context4.next = 10;
+            _context4.next = 9;
             return _CrawlUrlPost["default"].find({
               url: accounturl.url
             }).sort({
               uploadTime: -1
-            }).lean().limit(7).populate("postDetails");
+            }).lean().limit(50).populate("postDetails");
 
-          case 10:
+          case 9:
             postUrls = _context4.sent;
             semiResults = postUrls.map(function (post) {
               var dateDiff = post.postDetails.map(function (detail) {
@@ -326,54 +324,48 @@ var dataDetailController = /*#__PURE__*/function () {
                 comments: postComments
               };
             });
-            console.log("semiResults : ", semiResults);
             ;
             result = [];
             i = 0;
 
-          case 16:
+          case 14:
             if (!(i < semiResults.length)) {
-              _context4.next = 25;
+              _context4.next = 23;
               break;
             }
 
             semiResult = semiResults[i];
-            _context4.next = 20;
+            _context4.next = 18;
             return getResultObject(semiResult);
 
-          case 20:
+          case 18:
             data = _context4.sent;
             result.push(data);
 
-          case 22:
+          case 20:
             i++;
-            _context4.next = 16;
+            _context4.next = 14;
             break;
 
-          case 25:
-            // semiResults.map(async (semiResult) => {
-            //     console.log(semiResult);
-            //     return await getResultObject(semiResult);
-            // })
-            console.log("result", result);
+          case 23:
             res.render("detail_data", {
               title: "detail",
               result: result
             });
-            _context4.next = 32;
+            _context4.next = 29;
             break;
 
-          case 29:
-            _context4.prev = 29;
+          case 26:
+            _context4.prev = 26;
             _context4.t0 = _context4["catch"](0);
             console.log(_context4.t0);
 
-          case 32:
+          case 29:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[0, 29]]);
+    }, _callee4, null, [[0, 26]]);
   }));
 
   return function dataDetailController(_x5, _x6) {
