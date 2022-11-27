@@ -9,7 +9,7 @@
 			<div class="option-filters">
 				<div class="option-filters__calendar">
 					<% var today = new Date(); %>
-					<input type="date" class="option-filters__calendar startDate" value="<%=new Date(today.setDate(today.getDate()-6)).toISOString().slice(0,10)%>"/>
+					<input type="date" class="option-filters__calendar startDate" value="<%=new Date(today.setDate(today.getDate()-3)).toISOString().slice(0,10)%>"/>
 					<input type="date" class="option-filters__calendar endDate" value="<%=new Date().toISOString().slice(0,10)%>"/>
 				</div>
 			</div>

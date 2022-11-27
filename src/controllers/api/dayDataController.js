@@ -17,7 +17,7 @@ export const dayDataController = async (req, res) => {
             $and : [
                 { url: accounturl.url},
                 { uploadTime: { $gte: startDate } },
-                { uploadTime: { $lte: endDate } }
+                { uploadTime: { $lte: new Date(new Date(endDate).setDate(new Date(endDate).getDate()+1)) } }
             ]
         }
     );
@@ -91,6 +91,7 @@ export const dayDataController = async (req, res) => {
       let data = await getResultObject(semiResult);
       result.push(data);
     }
+    result.sort((a, b)=>b.uploadTime-a.uploadTime);
     res.send(result);
   } catch (e) {
     console.log(e);

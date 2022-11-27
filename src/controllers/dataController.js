@@ -104,13 +104,12 @@ export const dataDetailController = async (req, res) => {
             }
         );
         for(let i = 0; i<distinctPosts.length; i++){
-            let x = await CrawlPostData.find({title:distinctPosts[i]})
+            let x = await CrawlPostData.find({title:distinctPosts[i], url: accounturl.url})
                 .sort({createTime: 1})
                 .limit(1)
                 .populate('postDetails');
             postUrls.push(x[0]);
         }
-        console.log(postUrls);
         let semiResults = postUrls.map(post => {
             let dateDiff = post.postDetails.map(detail => {
                 // ceil은 천장 - 무조건 올림을 의미함 
@@ -174,6 +173,7 @@ export const dataDetailController = async (req, res) => {
             let data = await getResultObject(semiResult);
             result.push(data);
         }
+        result.sort((a, b)=>b.uploadTime-a.uploadTime);
         res.render("detail_data", {
             title: "detail",
             result
