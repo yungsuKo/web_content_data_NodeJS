@@ -91,13 +91,26 @@ export const dataDetailController = async (req, res) => {
         const {id} = req.params;
         console.log(id);
         const accounturl = await AccountUrl.findById(id);
-        let postUrls = await CrawlPostData.find({
-            url:accounturl.url
-        })
-            .sort({uploadTime:-1})
-            .lean()
-            .limit(50)
-            .populate("postDetails");
+        const startDate = new Date(new Date().setDate(new Date().getDate()-3));
+        const endDate = new Date();
+        let postUrls = [];
+        const distinctPosts = await CrawlPostData.distinct("title",
+            {
+                $and : [
+                    { url: accounturl.url},
+                    { uploadTime: { $gte: startDate } },
+                    { uploadTime: { $lte: endDate } }
+                ]
+            }
+        );
+        for(let i = 0; i<distinctPosts.length; i++){
+            let x = await CrawlPostData.find({title:distinctPosts[i]})
+                .sort({createTime: 1})
+                .limit(1)
+                .populate('postDetails');
+            postUrls.push(x[0]);
+        }
+        console.log(postUrls);
         let semiResults = postUrls.map(post => {
             let dateDiff = post.postDetails.map(detail => {
                 // ceil은 천장 - 무조건 올림을 의미함 
